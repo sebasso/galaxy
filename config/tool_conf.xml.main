@@ -131,4 +131,13 @@
   </section>
   <section id="samtools" name="NGS: SAM Tools">
   </section>
+
+
+  <section name="snp_detection" id="snp_detection">
+    <tool file="snp_detection/kSNP/kSNP3.xml">  
+  </section>
+
 </toolbox>
+
+
+
