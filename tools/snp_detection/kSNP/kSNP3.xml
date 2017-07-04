@@ -3,11 +3,11 @@
 
     <command>
     mkdir TestRun1;
-    kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML >> $results_file 2>> $output_file
+    $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -path $__tool_directory__/kSNP3.021_Source >> $results_file 2>> $output_file
     </command>
 <!--
 	command tag needs at least to pipe stderr because kSNP defaults write there like: 2>> someoutput_file. Use $ infront of filename to have it the <outputs> tag for galaxy to monitor the job live in the browser.
-
+  
 -->
   <inputs>
     <param name="input_files" type="data" format="fasta" multiple="true" label="Input files list"/>

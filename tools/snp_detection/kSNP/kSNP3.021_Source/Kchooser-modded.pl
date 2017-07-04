@@ -24,6 +24,9 @@ This version uses the median length genomes at both steps
 =cut
 
 my $infile = $ARGV[0];
+my $jellypath = $ARGV[1]."/jellyfish";
+#print STDERR "PATH:\n";
+#print STDERR $ARGV[1];
 my @sequences = (); #holds sequence ID in col0, sequence in col1, sequence length in col2
 #my $longestSeqIndex = 0;
 #my $longSequence = '';
@@ -52,7 +55,8 @@ my @args = ();
 my $sampleSize = 0;
 my $limitFrac;
 
-if ($ARGV[1]) {$limitFrac = $ARGV[1]} else {$limitFrac = 0.99;}
+#if ($ARGV[1]) {$limitFrac = $ARGV[1]} else {$limitFrac = 0.99;}
+$limitFrac = 0.99;
 
 
 
@@ -210,10 +214,10 @@ my @temp = '';
 
 
 
-@args = ('jellyfish', 'count', '-C', '-o', 'output', '-s', '10000000', '-t', '3', "$theFastaFile", '-m', "$Kvalue");
+@args = ($jellypath, 'count', '-C', '-o', 'output', '-s', '10000000', '-t', '3', "$theFastaFile", '-m', "$Kvalue");
 system(@args) == 0 or die "system @args failed: $!";
 
-@args = ('jellyfish dump output_0 -c > jellyout.txt' );
+@args = ($jellypath.' dump output_0 -c > jellyout.txt' );
 system(@args) == 0 or die "system @args failed: $!";
 
 open (INFILE, 'jellyout.txt') or die "Can't open jellyout.txt for reading. $!";

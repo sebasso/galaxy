@@ -19,8 +19,11 @@ def execute_kChooser_on_all(in_file,path):
 	perl_exec = path+'/Kchooser-modded.pl'
 	sys.stderr.write("Perl path:\n")
 	sys.stderr.write(perl_exec)
+	sys.stderr.write("\n")
+	sys.stderr.write(os.getcwd())
+	sys.stderr.write("\n")
 	for file in filepaths:
-		proc = subprocess.Popen(['perl', perl_exec, file], stdout=subprocess.PIPE)
+		proc = subprocess.Popen(['perl', perl_exec, file, path], stdout=subprocess.PIPE)
 		allthis += int(proc.communicate()[0])
 
 	answer = allthis/len(filepaths)
