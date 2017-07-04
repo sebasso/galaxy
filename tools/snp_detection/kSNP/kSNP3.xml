@@ -2,7 +2,7 @@
   <description>kSNP3 is a program that identifies the pan-genome SNPs in a set of genome sequences, and estimates phylogenetic trees based upon those SNPs</description>
 
     <command>
-    mkdir TestRun1;
+    mkdir -p TestRun1;
     $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -path $__tool_directory__/kSNP3.021_Source >> $results_file 2>> $output_file
     </command>
 <!--
@@ -22,6 +22,7 @@
    <outputs>
     <data name="output_file" auto_format="true"/>
     <data name="results_file" auto_format="true"/>
+    <data name="tree.ML.tre" auto_format="true" from_work_dir="TestRun1/tree.ML.tre"/>
   </outputs>
 
   <help>
