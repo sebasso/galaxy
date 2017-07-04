@@ -1,20 +1,22 @@
 <tool id="kSNP3" name="kSNP3 - identify pan genomes" version="3.0.0">
   <description>kSNP3 is a program that identifies the pan-genome SNPs in a set of genome sequences, and estimates phylogenetic trees based upon those SNPs</description>
     
-    <command>kSNP3 -in $in_list -outdir TestRun1 -k 13 >> $results_file 2>> $output_file</command>
+    <command>
+    mkdir TestRun1;
+    kSNP3 -in $in_list -outdir TestRun1 -k 13 -CPU 4 >> $results_file 2>> $output_file
+    </command>
 <!--
 	command tag needs at least to pipe stderr because kSNP defaults write there like: 2>> someoutput_file. Use $ infront of filename to have it the <outputs> tag for galaxy to monitor the job live in the browser.
 
 -->
 
   <inputs>
-    <param name="in_list" type="data" label="Input files list"/>
+    <param name="in_list" type="data" format="fasta" multiple="true" label="Input files list"/>
   </inputs>
 
    <outputs>
     <data name="output_file" auto_format="true"/>
     <data name="results_file" auto_format="true"/>
-    <data from_work_dir="TestRun1/SNPs_all_matrix.fasta" name="SNPs_all_matrix" auto_format="true" />
   </outputs>
 
   <help>
