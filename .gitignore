@@ -13,11 +13,11 @@ database/beaker_sessions
 database/citations
 database/community_files
 database/compiled_templates
-database/files
 database/jobs_directory
 database/job_working_directory
 database/pbs
 database/tmp
+database/files
 database/*.sqlite
 database/openid_consumer_cache
 database/dependencies
@@ -53,7 +53,6 @@ tool_shed_wsgi.ini
 
 # Config files.
 datatypes_conf.xml
-tool_conf.xml
 external_service_types_conf.xml
 migrated_tools_conf.xml
 shed_tool_conf.xml
@@ -68,7 +67,6 @@ shed_data_manager_conf.xml
 object_store_conf.xml
 job_metrics_conf.xml
 workflow_schedulers_conf.xml
-config/*
 config/plugins/interactive_environments/**/*.ini
 !config/plugins
 static/welcome.html.*

@@ -30,6 +30,7 @@ Options are the following: \
          exit
 endif
 
+exit
 set DEBUG=0
 
 echo "Location of kSNP scripts: "
