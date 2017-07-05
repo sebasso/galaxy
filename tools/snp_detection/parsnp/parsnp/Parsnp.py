@@ -1188,34 +1188,6 @@ if __name__ == "__main__":
     if os.path.exists("outtree"):
         os.system("rm outtree")
 
-    if reroot_tree and len(finalfiles) > 1:
-        sys.stderr.write("\n rerootes tree\n")
-        #print "-->Midpoint reroot.."
-        try:
-            mtree = open("%sparsnp.tree"%(outputDir+os.sep), 'r')
-            mtreedata = mtree.read()
-            mtreedata.replace("\n","")
-            tree = dendropy.Tree.get_from_string(mtreedata,"newick")
-            tree.reroot_at_midpoint(update_splits=False)
-            mftreef = tree.as_string('newick').split(" ",1)[1]
-            #print mftreef
-            mtreef = open(outputDir+os.sep+"parsnp.final.tree",'w')
-            mtreef.write(mftreef)
-            mtreef.close()
-            os.system("mv %s %s"%(outputDir+os.sep+"parsnp.final.tree",outputDir+os.sep+"parsnp.tree"))
-        except IOError:
-            sys.stderr.write( "ERROR: cannot process fasttree output, skipping midpoint reroot..\n")
-    print "  |->["+OK_GREEN+"OK"+ENDC+"]"
-
-
-    if 1 or len(use_gingr) > 0:
-        print "-->Creating Gingr input file.."
-        if xtrafast or 1:
-            #if newick available, add
-            #new flag to update branch lengths
-            run_command("%s/harvest --midpoint-reroot -u -q -i "%(PARSNP_DIR)+outputDir+os.sep+"parsnp.ggr -o "+outputDir+os.sep+"parsnp.ggr -n %s"%(outputDir+os.sep+"parsnp.tree "))
-
-    print "  |->["+OK_GREEN+"OK"+ENDC+"]"
 
     print "-->Calculating wall clock time.. "
     if float(elapsed)/float(60.0) > 60:
