@@ -73,7 +73,7 @@ TOTSEQS=0
 #template
 #read input
 #0) init
-## Get start time                                                                                                                                                                                                                                                                  
+## Get start time
 t1 = time.time()
 OSTYPE="linux"
 
@@ -124,7 +124,7 @@ def run_bng(query,workingdir):
     command = "%s/run_fasta"%()
     run_command(command,1)
     os.chdir(currdir)
-    
+
 def parallelWrapper(params):
    try:
         jobID = params["jobID"]
@@ -142,7 +142,7 @@ def parallelWrapper(params):
         result["status"] = 0
         sys.stderr.write( "Other error in thread %d, quitting\n"%(jobID))
         return result
-    
+
 def parallelFtWrapper(params):
    try:
         jobID = params["jobID"]
@@ -182,7 +182,7 @@ def parallelPhiWrapper(params):
         sys.stderr.write( "Other error in thread %d, quitting\n"%(jobID))
         return result
 
-                                                                                 
+
 
 
 def run_command(command,ignorerc=0):
@@ -261,7 +261,7 @@ def usage():
     print " -M = <flag>: calculate MUMi and exit? overrides all other choices! (default: NO)"
     #new, mutually exclusive
     print " -i = <float>: max MUM(i) distance (default: autocutoff based on distribution of MUMi values)"
-    print ""   
+    print ""
     print "<<MUM search>>"
     #new, default to lower, 12-17
     print " -a = <int>: min (a)NCHOR length (default = 1.1*Log(S))"
@@ -269,9 +269,9 @@ def usage():
     print " -z = <path>: min LCB si(z)e? (default = 25)"
     print ""
     print "<<LCB alignment>>"
-    print " -D = <float>: maximal diagonal difference? Either percentage (e.g. 0.2) or bp (e.g. 100bp) (default = 0.12)"    
+    print " -D = <float>: maximal diagonal difference? Either percentage (e.g. 0.2) or bp (e.g. 100bp) (default = 0.12)"
     print " -e = <flag> greedily extend LCBs? experimental! (default = NO)"
-    print " -n = <string>: alignment program (default: libMUSCLE)"        
+    print " -n = <string>: alignment program (default: libMUSCLE)"
     print " -u = <flag>: output unaligned regions? .unaligned (default: NO)"
     print ""
     print "<<Recombination filtration>>"
@@ -303,8 +303,8 @@ if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hxved:C:F:D:i:g:m:MU:o:a:cln:p:P:q:r:Rsz:uV", ["help","xtrafast","verbose","extend","sequencedir","clusterD","DiagonalDiff","iniFile","genbank","mumlength","onlymumi","MUMi","outputDir","anchorlength","curated","layout","aligNmentprog","threads","max-partition-size","query","reference","nofiltreps","split","minclustersiZe","unaligned","version"])
     except getopt.GetoptError, err:
-        # print help information and exit:                                                                                                                                                                                                        
-        print str(err) 
+        # print help information and exit:
+        print str(err)
         usage()
         sys.exit(2)
 
@@ -378,13 +378,13 @@ if __name__ == "__main__":
                             ref_seqs[currpos+fastalen] = seqnum
                             currpos = currpos+fastalen
                             seqnum+=1
-                        
+
                     rf.close()
                 except IOError:
                     sys.stderr.write( "ERROR: Reference genome file %s not found\n"%(ref))
-                    sys.exit(1)       
+                    sys.exit(1)
                 req_params["refgenome"] = 1
-                 
+
         elif o in ("-d","--sequenceDir"):
             genomepath = currdir+"/genomes"
             os.makedirs(genomepath)
@@ -411,12 +411,12 @@ if __name__ == "__main__":
                 rf.close()
             except IOError:
                 sys.stderr.write( "ERROR: optional Query file %s provided but not found\n"%(query))
-                sys.exit(1)            
+                sys.exit(1)
         elif o in ("-g","--genbank"):
             genbank_files_str = a
             genbank_files = genbank_files_str.split(",")
             ctcmd = "cat "
-            
+
             first = True
             #genbank_ref = ""
             for genbank_file in genbank_files_str.split(","):
@@ -424,7 +424,7 @@ if __name__ == "__main__":
                     continue
                 ctcmd += genbank_file + " "
                 try:
-                    #parse out reference, starts at ORIGIN ends at //, remove numbers, 
+                    #parse out reference, starts at ORIGIN ends at //, remove numbers,
                     rf = open(genbank_file,'r')
                     if first:
                         genbank_ref = genbank_file+".fna"
@@ -466,8 +466,8 @@ if __name__ == "__main__":
                             data += line[9:].replace(" ","")
                         if "ORIGIN" in line:
                              ntdata = True
-                    
-                    rf.close() 
+
+                    rf.close()
                     if len(data) < 10:
                           sys.stderr.write( "ERROR: Genbank file %s contains no sequence data\n"%(genbank_file))
                           sys.exit(1)
@@ -476,7 +476,7 @@ if __name__ == "__main__":
                 except IOError:
                     sys.stderr.write( "ERROR: Genbank file %s not found\n"%(genbank_file))
                     sys.exit(1)
-                
+
             genbank_files_cat = "%s.cat"%(genbank_files[0])
             os.system(ctcmd+"> "+genbank_files_cat)
             req_params["genbank"] = 1
@@ -595,7 +595,7 @@ if __name__ == "__main__":
         for f1 in files1:
             if not os.path.isdir(seqdir+os.sep+f1):
                 files.append(f1)
-            
+
         sys.stderr.write( "  |->["+OK_GREEN+"OK"+ENDC+"]\n")
     except IOError:
         sys.stderr.write( ERROR_RED+"ERROR: problem reading files from %s\n"%(seqdir)+ENDC)
@@ -626,7 +626,7 @@ if __name__ == "__main__":
                 nameok = True
                 for char in special_chars:
                     if char in file:
-              
+
                         print "WARNING: File %s contains a non-supported special character (\'%s\') in file name. Please remove if you'd like to include. For best practices see: http://support.apple.com/en-us/HT202808"%(file,char)
                         nameok = False
                         break
@@ -641,7 +641,7 @@ if __name__ == "__main__":
         ff = open(ref,'r')
         hdr = ff.readline()
         if hdr[0] == ">":
-    
+
             data = ff.read()
             data = data.replace("\n","")
             if "-" in data:
@@ -681,19 +681,19 @@ if __name__ == "__main__":
                 #sorry too small
                 if totlen <= 20:
                     continue
-                sizediff = float(reflen)/float(totlen) 
+                sizediff = float(reflen)/float(totlen)
                 if sizediff <= 0.6 or sizediff >= 1.4:
                     continue
 
                 fnafiles.append(file)
                 fnaf_sizes[file] = totlen#len(data)
             ff.close()
-    
-    
+
+
     if ref in fnafiles:
         sys.stderr.write( "ERROR: reference genome %s also in genome directory, restart and select different reference genome\n"%(ref))
         sys.exit(1)
-        
+
     if ref == "!":
         fnafiles.remove(ref)
 
@@ -729,7 +729,7 @@ if __name__ == "__main__":
     #write INI file
     if xtrafast or 1:
         extend = False
-    
+
     inifile1 = open("%s/template.ini"%(PARSNP_DIR),'r')
     inifiled = inifile1.read()
     inifiled = inifiled.replace("$REF",ref)
@@ -764,7 +764,7 @@ if __name__ == "__main__":
     qry_hit_dict = {}
     hdr_dict = {}
     length_dict = {}
-    
+
     TOTSEQS=len(fnafiles)+1
     seqids_list = []
     use_mummer_mumi = False
@@ -774,11 +774,11 @@ if __name__ == "__main__":
             sys.stderr.write( "Parsnp requires 2 or more genomes to run, exiting\n")
             print fnafiles, ref
             sys.exit(0)
-    
+
         file_string = ""
         cnt = 1
         for file in fnafiles:
-                
+
             file_string+="file%d=%s\n"%(cnt,seqdir+os.sep+file)
             file_string+="reverse%d=0\n"%(cnt)
             cnt +=1
@@ -807,7 +807,7 @@ if __name__ == "__main__":
                     idx,mi = line.split(":")
                     mumi_dict[int(idx)-1] = float(mi)
                 except ValueError:
-                    pass    
+                    pass
         except IOError:
             #mumi file generation failed, skip.. use all?
             i = 0
@@ -822,10 +822,10 @@ if __name__ == "__main__":
         for idx in mumi_dict.keys():
             if mumi_dict[idx] < lowest_mumi:
                 auto_ref = seqdir+os.sep+fnafiles[idx]
-                ref = auto_ref        
+                ref = auto_ref
                 lowest_mumi = mumi_dict[idx]
-    
-    mumi_f = ""        
+
+    mumi_f = ""
     if mumi_only and not curated:
         if not os.path.exists(outputDir):
             sys.stderr.write("Output directory does not exist! writing to cwd\n")
@@ -833,7 +833,7 @@ if __name__ == "__main__":
             mumi_f = open("recruited_genomes.lst",'w')
         else:
             mumi_f = open(outputDir+os.sep+"recruited_genomes.lst",'w')
-        
+
     if VERBOSE:
         print "RECRUITED GENOMES:\n"
 
@@ -849,7 +849,7 @@ if __name__ == "__main__":
     minv=1.0
     if len(mumivals) > 0:
         minv = numpy.percentile(mumivals,0)
-    
+
     dvals = mumivals
 
 
@@ -872,7 +872,7 @@ if __name__ == "__main__":
                 finalfiles.append(fnafiles[idx])
                 allfiles.append(fnafiles[idx])
     if VERBOSE:
-        print 
+        print
 
     if curated:
         for file in fnafiles:
@@ -917,7 +917,7 @@ if __name__ == "__main__":
         if len(finalfiles) < 1 or ref == "":
             sys.stderr.write( "ERROR: Parsnp requires 2 or more genomes to run, exiting\n")
             sys.exit(0)
-    
+
         file_string = ""
         cnt = 1
         file_string_closest = ""
@@ -953,7 +953,7 @@ if __name__ == "__main__":
         inifile_closest = open(outputDir+os.sep+"psnn.ini",'w')
         inifile_closest.write(inifiled_closest)
         inifile_closest.close()
-    
+
 
     #3)run parsnp (cores, grid?)
     print "-->Running Parsnp multi-MUM search and libMUSCLE aligner.."
@@ -979,7 +979,7 @@ if __name__ == "__main__":
                     sys.exit(1)
                 command = "%s/parsnp %s"%(PARSNP_DIR,inifile)
             run_command(command)
-        
+
 
             if not os.path.exists(outputDir+os.sep+"parsnpAligner.xmfa"):
 
@@ -987,14 +987,14 @@ if __name__ == "__main__":
                 runcnt +=1
                 if runcnt >= 2:
                     sys.stderr.write("Error: set of recruited genomes are too divergent for parsnp, please reduce MUMi (%f) and relaunch\n"%(float(mumidistance)))
-                    sys.exit(1)                
+                    sys.exit(1)
             else:
                 successful_run = True
                 runcnt +=1
                 break
         os.system("mv "+outputDir+os.sep+"parsnpAligner.xmfa "+outputDir+os.sep+"parsnp.xmfa")
     xmfafile = open(outputDir+os.sep+"parsnp.xmfa",'r')
-        
+
     file2hdr_dict = {}
     fileid = ""
     blockfiles = []
@@ -1004,7 +1004,7 @@ if __name__ == "__main__":
     totlength = 0
     totseqs = 0
     try:
-        cf = open("%sparsnpAligner.log"%(outputDir+os.sep)) 
+        cf = open("%sparsnpAligner.log"%(outputDir+os.sep))
         for line in cf.xreadlines():
             if "Total coverage among all sequences:" in line:
                 coverage = line.split(":",1)[-1].replace("\n","")
@@ -1042,16 +1042,16 @@ if __name__ == "__main__":
                 if header[0] != ">":
                     sys.stderr.write( "Error with LCB: %s\n"%(file))
                     continue
-                
+
                 inf = header.split("+",1)[0]
-                
+
                 rseq = ""
                 while 1:
                     lff = lf.readline()
                     if lff[0] == ">":
                         break
                     rseq += lff.replace("\n","")
-                
+
                 spos,epos = inf.split(":",1)[-1].split("-",1)
                 block_startpos.append(int(spos))
                 block_dict[file] = [int(spos),int(epos), rseq]
@@ -1060,7 +1060,7 @@ if __name__ == "__main__":
 
     #initiate parallelPhiPack tasks
     run_recomb_filter = 0
-   
+
     if xtrafast:
         run_recomb_filter = 1
     else:
@@ -1084,7 +1084,7 @@ if __name__ == "__main__":
                 seq1 = seq1.replace("\n","")
                 bf.close()
             except IOError:
-                pass    
+                pass
 
             processed.append(file)
             params = {}
@@ -1097,11 +1097,11 @@ if __name__ == "__main__":
             params["output"] = "%sProfile.csv"%(path+os.sep)#(path+os.sep+file+".out")
             tasks.append(params)
             icnt +=1
-    
+
         #run parallelPhiPack
         pool = Pool(processes=int(threads))
         result = pool.map_async(parallelPhiWrapper,tasks).get(sys.maxint)
-        
+
         for i in result:
             if (i["status"] == 1):
                 #process output
@@ -1140,9 +1140,9 @@ if __name__ == "__main__":
                                 if block_spos < chr_spos:
                                     chrnum = ref_seqs[cs]
                             bedfile_dict[srpos] = "%d\t%s\t%s\tREC\t%.3f\t+\n"%(chrnum,srpos,pos+50+block_spos,eval)
-                             
 
-                    
+
+
                 qfile = tasks[i["jobID"]]["query"]
 
             elif i["status"] != 2:
@@ -1159,7 +1159,7 @@ if __name__ == "__main__":
 
     if run_recomb_filter:
         sys.stderr.write("  |->["+OK_GREEN+"OK"+ENDC+"]\n")
-    else:        
+    else:
         sys.stderr.write("  |->["+SKIP_GRAY+"SKIP"+ENDC+"]\n")
     run_lcb_trees = 0
 
@@ -1181,14 +1181,15 @@ if __name__ == "__main__":
 
         run_command("%s/harvest -q -i %s/parsnp.ggr -S "%(PARSNP_DIR,outputDir)+outputDir+os.sep+"parsnp.snps.mblocks")
 
-    command = "%s/ft -nt -quote -gamma -slow -boot 100 "%(PARSNP_DIR)+outputDir+os.sep+"parsnp.snps.mblocks > "+outputDir+os.sep+"parsnp.tree"
+    command = "%s/ft -nt -gtr -slow "%(PARSNP_DIR)+outputDir+os.sep+"parsnp.snps.mblocks > "+outputDir+os.sep+"parsnp.tree"
     print "-->Reconstructing core genome phylogeny.."
     run_command(command)
     #7)reroot to midpoint
     if os.path.exists("outtree"):
         os.system("rm outtree")
-       
+
     if reroot_tree and len(finalfiles) > 1:
+        sys.stderr.write("\n rerootes tree\n")
         #print "-->Midpoint reroot.."
         try:
             mtree = open("%sparsnp.tree"%(outputDir+os.sep), 'r')
@@ -1213,7 +1214,7 @@ if __name__ == "__main__":
             #if newick available, add
             #new flag to update branch lengths
             run_command("%s/harvest --midpoint-reroot -u -q -i "%(PARSNP_DIR)+outputDir+os.sep+"parsnp.ggr -o "+outputDir+os.sep+"parsnp.ggr -n %s"%(outputDir+os.sep+"parsnp.tree "))
- 
+
     print "  |->["+OK_GREEN+"OK"+ENDC+"]"
 
     print "-->Calculating wall clock time.. "
@@ -1221,7 +1222,7 @@ if __name__ == "__main__":
         print "  |->"+BOLDME+"Aligned %d genomes in %.2f hours"%(totseqs,float(elapsed)/float(3600.0))+ENDC
     elif float(elapsed) > 60:
         print "  |->"+BOLDME+"Aligned %d genomes in %.2f minutes"%(totseqs,float(elapsed)/float(60.0))+ENDC
-    else: 
+    else:
         print "  |->"+BOLDME+"Aligned %d genomes in %.2f seconds"%(totseqs,float(elapsed))+ENDC
     #cleanup
     rmfiles = glob.glob(outputDir+os.sep+"*.aln")
@@ -1294,7 +1295,7 @@ if __name__ == "__main__":
 
     #if os.path.exists("%s/parsnp.snps.mblocks"%(outputDir)):
      #   os.remove("%s/parsnp.snps.mblocks"%(outputDir))
-     #comment in order for galaxy to save contents of it, will be deleted anyway by the scheduler
+     #commented out in order for galaxy to save contents of it, will be deleted anyway by the scheduler
 
     if not VERBOSE and os.path.exists("%s/all.mumi"%(outputDir)):
         os.remove("%s/all.mumi"%(outputDir))
@@ -1305,4 +1306,3 @@ if __name__ == "__main__":
         if binary_type == "osx":
             print ">>Launching gingr.."
             os.system("open -n %s --args %s/parsnp.ggr"%(use_gingr,outputDir))
-

@@ -639,7 +639,7 @@ endif
 ## Building ML FastTree tree from all SNPs
 # TODO: modify fasttree unified to parsnp
 if ($?ML) then
- $kSNP/FastTreeMP  -nt -pseudo  -gamma -gtr SNPs_all_matrix.fasta >!  tree.ML.tre
+ $kSNP/FastTreeMP  -nt -gtr -slow SNPs_all_matrix.fasta >!  tree.ML.tre
  printf "ML\n" >> tree_list1
  printf "ML\n" >> tree_list2
 endif
