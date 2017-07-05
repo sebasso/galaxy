@@ -1,27 +1,39 @@
-<tool id="parsnp" name="parsnp - snp detection" version="3.0.0">
-  <description>Parsnp is a command-line-tool for efficient microbial core genome alignment and SNP detection. Parsnp was designed to work in tandem with Gingr, a flexible platform for visualizing genome alignments and phylogenetic trees; both Parsnp and Gingr form part of the Harvest suite :
+<tool id="parsnp" name="parsnp " version="3.0.0">
+  <description>Parsnp is a command-line-tool for efficient microbial core genome alignment and SNP detection.
+     Parsnp was designed to work in tandem with Gingr, a flexible platform
+    for visualizing genome alignments and phylogenetic trees; both Parsnp and Gingr form part of the Harvest suite :
+</description>
 
-Harvest project page
-url: http://harvest.readthedocs.org
-Parsnp is primarily distributed as a binary for Linux or OS X (see Parsnp link above ). However, the source and build scripts are provided for incompatible platforms or for development purposes.</description>
-    
-    <command>./parsnp -r refs/NC_002163-ref.fna -d /work/projects/nn9305k/compgenomes/rawdata/campy_asms -p 10 -o Res-campy/"$NOW-scaffolds"</command>
+    <command>
+      mkdir Res-campy;
+      python $__tool_directory__/parsnp/Parsnp.py -r $reference_genome -d $genome_list -p $CPUS -o Res-campy/ >> $stdout 2>> $stderr
+
+    </command>
 <!--
-  command tag needs at least to pipe stderr because kSNP defaults write there like: 2>> someoutput_file. Use $ infront of filename to have it the <outputs> tag for galaxy to monitor the job live in the browser.
 
+outputs:
+consider parsnp.xmfa
 -->
 
   <inputs>
-    <param name="in_list" type="data" label="Input files list"/>
+    <param name="genome_list" type="data" multiple="true" label="Input genome files separated by ,"/>
+    <param name="reference_genome" type="data" label="Reference genome"/>
+    <param name="CPUS" type="integer" value="1" label="Num cpus" optional="false"/>
   </inputs>
 
    <outputs>
-    <data name="output_file" auto_format="true"/>
-    <data name="results_file" auto_format="true"/>
-    <data from_work_dir="TestRun1/SNPs_all_matrix.fasta" name="SNPs_all_matrix" auto_format="true" />
+     <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
+     <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
+     <data name="ML_tree" auto_format="true" from_work_dir="Res-campy/parsnp.tree" label="${tool.name}  ML tree"/>
+     <data name="All Snps" auto_format="true" from_work_dir="Res-campy/parsnp.snps.mblocks" label="${tool.name} SNP list"/>
   </outputs>
 
   <help>
-    kSNP3 is provided as both a Linux package for 64-bit CPUs and as a Mac OS X package. The packages contain the kSNP3 program and this documentation. In addition there are two example input data sets that are used as the basis for the discussion of the output files in Section III. Those data sets must be downloaded separately.
+    Harvest project page:
+    url: http://harvest.readthedocs.org
+    kSNP3 is provided as both a Linux package for 64-bit CPUs and as a Mac OS X package.
+     The packages contain the kSNP3 program and this documentation.
+     In addition there are two example input data sets that are used as the basis for the discussion
+     of the output files in Section III. Those data sets must be downloaded separately.
   </help>
 </tool>

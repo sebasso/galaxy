@@ -1,13 +1,13 @@
-<tool id="kSNP3" name="kSNP3 - identify pan genomes" version="3.0.0">
+<tool id="kSNP3" name="kSNP3 " version="3.0.0">
   <description>kSNP3 is a program that identifies the pan-genome SNPs in a set of genome sequences, and estimates phylogenetic trees based upon those SNPs</description>
 
     <command>
     mkdir -p TestRun1;
-    $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -path $__tool_directory__/kSNP3.021_Source >> $results_file 2>> $output_file
+    $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -path $__tool_directory__/kSNP3.021_Source >> $stdout 2>> $stderr
     </command>
 <!--
 	command tag needs at least to pipe stderr because kSNP defaults write there like: 2>> someoutput_file. Use $ infront of filename to have it the <outputs> tag for galaxy to monitor the job live in the browser.
-  
+
 -->
   <inputs>
     <param name="input_files" type="data" format="fasta" multiple="true" label="Input files list"/>
@@ -20,9 +20,10 @@
   </inputs>
 
    <outputs>
-    <data name="output_file" auto_format="true"/>
-    <data name="results_file" auto_format="true"/>
-    <data name="tree.ML.tre" auto_format="true" from_work_dir="TestRun1/tree.ML.tre"/>
+     <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
+     <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
+    <data name="tree.ML.tre" auto_format="true" from_work_dir="TestRun1/tree.ML.tre" label="${tool.name} ML tree"/>
+    <data name="All Snps" auto_format="true" from_work_dir="TestRun1/SNPs_all_matrix.fasta" label="${tool.name} SNP list"/>
   </outputs>
 
   <help>

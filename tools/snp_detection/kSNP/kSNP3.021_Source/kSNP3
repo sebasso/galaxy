@@ -149,21 +149,16 @@ if ($?SNPs_all) then
     printf "SNPs_all $SNPs_all\n"
 endif
 
-if ($kchooser == "1") then
-  printf "$k\n"
-  set k=`python $kSNP/Kchooser-allFiles.py in_list $kSNP`
-  printf "sat k with kchooser k:$k\n"
+if ($?kchooser) then
+  if ($kchooser == "1") then
+    printf "k before kchooser: $k\n"
+    set k=`python $kSNP/Kchooser-allFiles.py in_list $kSNP`
+    printf "sat k with kchooser k:$k\n"
+  endif
+else
+  printf "Kchooser variable is undefined\n"
 endif
 
-if (! $?kchooser) then
-  echo "Kchooser variable is undefined"
-else
-  if ("$kchooser" == "")  then
-      echo "kchooser variable is empty"
-  else
-    printf "kchooser value contains: $kchooser"
-  endif
-endif
 
 
 echo "Starting kSNP"
