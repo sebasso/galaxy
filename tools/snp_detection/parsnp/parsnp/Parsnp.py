@@ -994,6 +994,11 @@ if __name__ == "__main__":
                 break
         os.system("mv "+outputDir+os.sep+"parsnpAligner.xmfa "+outputDir+os.sep+"parsnp.xmfa")
     xmfafile = open(outputDir+os.sep+"parsnp.xmfa",'r')
+    cmd = "python parsnp_SNP_POS_extracter.py parsnp.xmfa"
+    p = subprocess.Popen(command, shell=True, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,close_fds=True,executable="/bin/bash")
+    fstdout,fstderr = p.communicate()
+    sys.stderr.write(os.getcwd())
+
 
     file2hdr_dict = {}
     fileid = ""

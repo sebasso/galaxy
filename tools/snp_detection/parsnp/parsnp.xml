@@ -27,6 +27,7 @@ consider parsnp.xmfa
      <data name="ML_tree" format="nhx" from_work_dir="Res-campy/parsnp.tree" label="${tool.name}  ML tree"/>
      <data name="All Snps" format="txt" from_work_dir="Res-campy/parsnp.snps.mblocks" label="${tool.name} SNP list"/>
      <data name="XMFA file" format="txt" from_work_dir="Res-campy/parsnp.xmfa" label="${tool.name} XMFA"/>
+     <data name="SNP list formatted" format="txt" from_work_dir="parsnp_SNPs_POS_formatted" label="${tool.name} Formatted snp position list"/>
   </outputs>
 
   <help>
