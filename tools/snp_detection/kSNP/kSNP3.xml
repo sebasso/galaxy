@@ -29,6 +29,7 @@ core snps not useful for now, gives nearly no SNPs:
     <data name="ML_tree" format="nhx" from_work_dir="TestRun1/tree.ML.tre" label="${tool.name} ML tree"/>
     <data name="All Snps" format="txt" from_work_dir="TestRun1/SNPs_all_matrix.fasta" label="${tool.name} SNP list"/>
     <data name="SNPs with position" format="txt" from_work_dir="TestRun1/SNPs_all" label="${tool.name} SNP list with SNP position"/>
+    <data name="SNP list formatted" format="txt" from_work_dir="TestRun1/kSNP_SNPs_Pos_formatted" label="${tool.name} Formatted snp position list"/>
   </outputs>
 
   <help>

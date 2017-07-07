@@ -426,6 +426,9 @@ sort -u all_SNPs_unsorted >! all_SNPs_sorted
 $kSNP/number_SNPs_all3 all_SNPs_sorted
 $kSNP/rename_from_table3 all_SNPs_sorted_labelLoci fileName2genomeName SNPs_all
 
+#creates sorted formatted SNP position list for analysis
+python $kSNP/kSNP_SNP_POS_extracter.py SNPs_all
+
 
 # Set reference genome for vcf file to the be first finished genome, if this is empty, then set it to be the first genome in the input fasta file.
 if (-s annotate_list) then
