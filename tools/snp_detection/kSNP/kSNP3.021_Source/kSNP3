@@ -64,19 +64,19 @@ while ($#argv > 0)
       set fasta_list="$argv[1]"
       set words = `echo $fasta_list:q | sed 's/,/ /g'`
       touch in_list
+      touch annotate_genomes
       foreach word ($words:q)
         set base=`basename $word`
         printf "$word\t$base\n" >> in_list
+        printf "$base\n" >> annotate_genomes
       end
       set fasta_list=`pwd`/in_list
+      cat annotate_genomes
+      set annotate_list=`pwd`/annotate_genomes
       breaksw
         case -outdir:
             shift
             set dir="$argv[1]"
-            breaksw
-        case -annotate:
-            shift
-            set annotate_list="$argv[1]"
             breaksw
 	case -all_annotations:
             set all_annotations=1

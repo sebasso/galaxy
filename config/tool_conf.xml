@@ -133,10 +133,17 @@
   </section>
 
 
+  <section name="DNA simulation" id="DNA simulation">
+
+  </section>
 
   <section name="snp_detection" id="snp_detection">
     <tool file="snp_detection/kSNP/kSNP3.xml"/>
     <tool file="snp_detection/parsnp/parsnp.xml"/>  
+  </section>
+
+  <section name="SNP and tree comparinson" id="Snp comparing">
+    
   </section>
 
 

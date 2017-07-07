@@ -16,16 +16,16 @@ consider parsnp.xmfa
 -->
 
   <inputs>
-    <param name="genome_list" type="data" multiple="true" label="Input genome files separated by ,"/>
-    <param name="reference_genome" type="data" label="Reference genome"/>
+    <param name="genome_list" type="data" multiple="true" label="Input genome files separated by ," format="fasta"/>
+    <param name="reference_genome" format="fasta" type="data" label="Reference genome"/>
     <param name="CPUS" type="integer" value="1" label="Num cpus" optional="false"/>
   </inputs>
 
    <outputs>
      <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
      <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
-     <data name="ML_tree" auto_format="true" from_work_dir="Res-campy/parsnp.tree" label="${tool.name}  ML tree"/>
-     <data name="All Snps" auto_format="true" from_work_dir="Res-campy/parsnp.snps.mblocks" label="${tool.name} SNP list"/>
+     <data name="ML_tree" format="nhx" from_work_dir="Res-campy/parsnp.tree" label="${tool.name}  ML tree"/>
+     <data name="All Snps" format="txt" from_work_dir="Res-campy/parsnp.snps.mblocks" label="${tool.name} SNP list"/>
   </outputs>
 
   <help>

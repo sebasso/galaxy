@@ -3,11 +3,15 @@
 
     <command>
     mkdir -p TestRun1;
-    $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -path $__tool_directory__/kSNP3.021_Source >> $stdout 2>> $stderr
+    $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -core -path $__tool_directory__/kSNP3.021_Source >> $stdout 2>> $stderr
     </command>
 <!--
 	command tag needs at least to pipe stderr because kSNP defaults write there like: 2>> someoutput_file. Use $ infront of filename to have it the <outputs> tag for galaxy to monitor the job live in the browser.
+file formats supported in galaxy:
+https://github.com/galaxyproject/galaxy/blob/dev/config/datatypes_conf.xml.sample
 
+core snps not useful for now, gives nearly no SNPs:
+<data name="Core Snps" format="txt" from_work_dir="TestRun1/core_SNPs_matrix" label="${tool.name} Core SNP list"/>
 -->
   <inputs>
     <param name="input_files" type="data" format="fasta" multiple="true" label="Input files list"/>
@@ -22,8 +26,9 @@
    <outputs>
      <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
      <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
-    <data name="tree.ML.tre" auto_format="true" from_work_dir="TestRun1/tree.ML.tre" label="${tool.name} ML tree"/>
-    <data name="All Snps" auto_format="true" from_work_dir="TestRun1/SNPs_all_matrix.fasta" label="${tool.name} SNP list"/>
+    <data name="ML_tree" format="nhx" from_work_dir="TestRun1/tree.ML.tre" label="${tool.name} ML tree"/>
+    <data name="All Snps" format="txt" from_work_dir="TestRun1/SNPs_all_matrix.fasta" label="${tool.name} SNP list"/>
+    <data name="SNPs with position" format="txt" from_work_dir="TestRun1/SNPs_all" label="${tool.name} SNP list with SNP position"/>
   </outputs>
 
   <help>
