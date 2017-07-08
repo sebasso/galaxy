@@ -300,8 +300,9 @@ if __name__ == "__main__":
     #PARSNP_DIR = parsnp_dir
     opts = []
     args = []
+    executables = sys.argv[1]
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hxved:C:F:D:i:g:m:MU:o:a:cln:p:P:q:r:Rsz:uV", ["help","xtrafast","verbose","extend","sequencedir","clusterD","DiagonalDiff","iniFile","genbank","mumlength","onlymumi","MUMi","outputDir","anchorlength","curated","layout","aligNmentprog","threads","max-partition-size","query","reference","nofiltreps","split","minclustersiZe","unaligned","version"])
+        opts, args = getopt.getopt(sys.argv[2:], "hxved:C:F:D:i:g:m:MU:o:a:cln:p:P:q:r:Rsz:uV", ["help","xtrafast","verbose","extend","sequencedir","clusterD","DiagonalDiff","iniFile","genbank","mumlength","onlymumi","MUMi","outputDir","anchorlength","curated","layout","aligNmentprog","threads","max-partition-size","query","reference","nofiltreps","split","minclustersiZe","unaligned","version"])
     except getopt.GetoptError, err:
         # print help information and exit:
         print str(err)
@@ -994,11 +995,16 @@ if __name__ == "__main__":
                 break
         os.system("mv "+outputDir+os.sep+"parsnpAligner.xmfa "+outputDir+os.sep+"parsnp.xmfa")
     xmfafile = open(outputDir+os.sep+"parsnp.xmfa",'r')
-    cmd = "python parsnp_SNP_POS_extracter.py parsnp.xmfa"
-    p = subprocess.Popen(command, shell=True, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,close_fds=True,executable="/bin/bash")
-    fstdout,fstderr = p.communicate()
-    sys.stderr.write(os.getcwd())
 
+    pyfile = executables+"/parsnp/"+"parsnp_SNP_POS_extracter.py"
+    inputfile = os.getcwd()+"/Res-campy/parsnp.xmfa"
+    p = subprocess.Popen([sys.executable,pyfile,inputfile], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    fstdout,fstderr = p.communicate()
+    sys.stderr.write("\n")
+    sys.stderr.write(fstdout)
+    sys.stderr.write("\n")
+    sys.stderr.write(fstderr)
+    sys.stderr.write("\n")
 
     file2hdr_dict = {}
     fileid = ""

@@ -6,13 +6,12 @@
 
     <command>
       mkdir Res-campy;
-      python $__tool_directory__/parsnp/Parsnp.py -r $reference_genome -d $genome_list -p $CPUS -o Res-campy/ >> $stdout 2>> $stderr
+      python $__tool_directory__/parsnp/Parsnp.py $__tool_directory__ -r $reference_genome -d $genome_list -p $CPUS -o Res-campy/ >> $stdout 2>> $stderr
 
     </command>
 <!--
 
-outputs:
-consider parsnp.xmfa
+
 -->
 
   <inputs>

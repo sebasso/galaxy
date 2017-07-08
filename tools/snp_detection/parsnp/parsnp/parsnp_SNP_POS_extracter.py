@@ -5,7 +5,7 @@ import os
 
 """
 while line startswith ##
-	build mapping between sequenceindex and sequence file && captuer heading
+	build mapping between sequenceindex and sequence file && capture heading
 """
 
 def parsesnps():
@@ -64,7 +64,7 @@ def parsesnps():
 
 	currpath=os.getcwd()
 	outputfile=currpath+"/"+"parsnp_SNPs_POS_formatted"
-    sys.stderr.write( currpath)
+
 	#sort on SNP position
 	#outputFormattedSnps = sorted(outputFormattedSnps, key=lambda x: int(x.split("\t")[1]))
 
