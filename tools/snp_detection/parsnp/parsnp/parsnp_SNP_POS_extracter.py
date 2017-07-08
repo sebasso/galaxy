@@ -58,6 +58,8 @@ def parsesnps():
 	for key,val in snps.items():
 		for entry in val:
 			placeholder=seq_mapping[key].split("\t")
+			if ".ref" in placeholder[0]:
+				placeholder[0] = placeholder[0][:-4]
 			output = placeholder[0]+sep+entry[0]+sep+entry[1]+sep+placeholder[1]
 			outputFormattedSnps.append(output)
 

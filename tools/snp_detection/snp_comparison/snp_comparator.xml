@@ -1,0 +1,30 @@
+<tool id="snp_comparator" name="SNP comparator " version="3.0.0">
+  <description>
+    SNP comparator accumulates up SNPs for each genome and in total, it also takes into account how many % wise similar SNPs each tool
+    has in regards to their position.
+    Usage: python snp_comparator.py snp_position_list_from_tool_1.txt snp_position_list_from_tool_2.txt ....
+    sys.argv[1] = comma separated list of SNP formatted lists from genome alignment
+</description>
+
+    <command>
+      mkdir Res-campy;
+      python $__tool_directory__/snp_comparator.py $SNPs_formatted_files >> $stdout 2>> $stderr;
+
+    </command>
+<!--
+-->
+
+  <inputs>
+    <param name="SNPs_formatted_files" type="data" multiple="true" label="Input genome files separated by ," format="txt"/>
+  </inputs>
+
+   <outputs>
+     <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
+     <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
+     <data name="Accumulated SNPs statistics" format="txt" from_work_dir="SNP_statistics" label="${tool.name} SNP statistics"/>
+  </outputs>
+
+  <help>
+    https://github.com/sebasso/galaxy
+  </help>
+</tool>
