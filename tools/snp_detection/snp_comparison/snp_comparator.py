@@ -14,6 +14,37 @@ import json
 
     x. make extensible for > 3 tool comparisons
 
+    output example:
+{
+  "total_snps": [
+    705,
+    376
+  ],
+  "same_loci_filename": [
+
+  ],
+  "tool_names": [
+    "dataset_589.dat",
+    "dataset_598.dat"
+  ],
+  "SNPs_per_genome": [
+    {
+      "dataset_4.dat": 208,
+      "dataset_3.dat": 208,
+      "dataset_2.dat": 204,
+      "dataset_1.dat": 85
+    },
+    {
+      "dataset_78.dat": 94,
+      "dataset_77.dat": 94,
+      "dataset_76.dat": 94,
+      "dataset_131.dat": 94
+    }
+  ],
+  "same_loci_snps": [
+
+  ]
+}
 
 """
 
@@ -49,7 +80,7 @@ def find_SNPs_in_same_position(files):
                 elif int(l1[1]) > int(l2[1]):
                     break
 
-                return (SNPs_same_position, SNPs_same_position_and_file)
+    return (SNPs_same_position, SNPs_same_position_and_file)
 
 
 def count_snps_per_genome(snp_lists_files):

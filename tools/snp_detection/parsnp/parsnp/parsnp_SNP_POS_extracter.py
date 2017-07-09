@@ -27,12 +27,24 @@ def parsesnps():
 	snps = {}
 	poscount = 0
 	#snps["1"] = list([POS, SNP],[])
+	sys.stderr.write("header xmfa\n")
+	sys.stderr.write(str(inputSnps[i+5].startswith(">")))
+	sys.stderr.write(inputSnps[i+5])
+	sys.stderr.write("\n")
 	for j in xrange(i+5,len(inputSnps)):
 		if inputSnps[j].startswith(">"):
+			poscount = 0
 			header = inputSnps[j].split(" ")[0]
 			header = header.split("-")
 			snpid = header[0].split(":")[0][1:]
 			startpos = header[0].split(":")[1]
+
+			sys.stderr.write("\nsnpID:\n")
+			sys.stderr.write(snpid)
+			sys.stderr.write("\n")
+			sys.stderr.write("\startpos:\n")
+			sys.stderr.write(startpos)
+			sys.stderr.write("\n")
 			#endpos = header[1]
 
 			if not snpid in snps:
