@@ -65,7 +65,7 @@ def parsesnps():
 
 
 	currpath=os.getcwd()
-	outputfile=currpath+"/"+"parsnp_SNPs_POS_formatted"
+	outputfile=currpath+"/"+"parsnp_SNPs_POS_formatted.tsv"
 
 	#sort on SNP position
 	outputFormattedSnps = sorted(outputFormattedSnps, key=lambda x: int(x.split("\t")[1]))

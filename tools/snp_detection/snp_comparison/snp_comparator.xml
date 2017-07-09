@@ -17,8 +17,8 @@
 -->
 
   <inputs>
-    <param name="tool_snps_one" format="txt" type="data" label="tool1"/>
-    <param name="tool_snps_two" format="txt" type="data" label="tool2"/>
+    <param name="tool_snps_one" format="tsv" type="data" label="tool1"/>
+    <param name="tool_snps_two" format="tsv" type="data" label="tool2"/>
   </inputs>
 
    <outputs>
