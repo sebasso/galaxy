@@ -7,21 +7,24 @@
 </description>
 
     <command>
-      mkdir Res-campy;
-      python $__tool_directory__/snp_comparator.py $SNPs_formatted_files >> $stdout 2>> $stderr;
+
+      python $__tool_directory__/snp_comparator.py $tool_snps_one $tool_snps_two >> $stdout 2>> $stderr;
 
     </command>
 <!--
+<data name="Accumulated SNPs statistics" format="txt" from_work_dir="SNP_statistics" label="${tool.name} SNP statistics"/>
+<param name="SNPs_formatted_files" format="txt" type="data" multiple="true" label="Input genome files separated by ,"/>
 -->
 
   <inputs>
-    <param name="SNPs_formatted_files" type="data" multiple="true" label="Input genome files separated by ," format="txt"/>
+    <param name="tool_snps_one" format="txt" type="data" label="tool1"/>
+    <param name="tool_snps_two" format="txt" type="data" label="tool2"/>
   </inputs>
 
    <outputs>
      <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
      <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
-     <data name="Accumulated SNPs statistics" format="txt" from_work_dir="SNP_statistics" label="${tool.name} SNP statistics"/>
+     <data name="Accumulated SNPs statistics" format="json" from_work_dir="snps_stats.json" label="${tool.name} SNP statistics"/>
   </outputs>
 
   <help>
