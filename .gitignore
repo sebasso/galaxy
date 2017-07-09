@@ -63,7 +63,6 @@ job_conf.xml
 data_manager_conf.xml
 shed_data_manager_conf.xml
 object_store_conf.xml
-job_metrics_conf.xml
 workflow_schedulers_conf.xml
 config/plugins/interactive_environments/**/*.ini
 !config/plugins
