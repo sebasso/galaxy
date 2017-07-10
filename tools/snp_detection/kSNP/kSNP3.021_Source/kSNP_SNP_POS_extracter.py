@@ -42,6 +42,7 @@ def parsesnps():
 	outputFormattedSnps = sorted(outputFormattedSnps, key=lambda x: int(x.split("\t")[1]))
 
 	with open(outputfile,"w") as f:
+		f.write("%s\n" %"kSNP")
 		for lineoutput in outputFormattedSnps:
 			f.write("%s\n" %lineoutput)
 

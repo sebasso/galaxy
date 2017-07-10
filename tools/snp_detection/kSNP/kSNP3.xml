@@ -15,7 +15,7 @@ core snps not useful for now, gives nearly no SNPs:
 -->
   <inputs>
     <param name="input_files" type="data" format="fasta" multiple="true" label="Input files list"/>
-    <param name="CPUS" type="integer" value="1" label="Num cpus" optional="false"/>
+    <param name="CPUS" type="integer" value="4" label="Num cpus" optional="false"/>
 
     <param name="kchoose" type="select" value="1" optional="false" label="Find optimal k value for dataset with kchooser">
       <option value="1">Yes</option>

@@ -51,10 +51,16 @@ import json
 
 def readfiles(files):
     all_files = []
+    tool_names = []
     for f in files:
         with open(f,"r") as f:
-            all_files.append(f.readlines())
-    return all_files
+            tmp = f.readlines()
+            filename = tmp[0]
+            sys.stderr.write("\n"+filename+"\n")
+            all_files.append(tmp[1:])
+            tool_names.append(filename)
+
+    return all_files, tool_names
 
 def find_SNPs_in_same_position(files):
     comparisons = len(files)-1
@@ -102,12 +108,10 @@ def compare_snps(SNP_files):
         sys.stderr.write("snp_comparator requires a minimum of 2 formatted SNP lists with their respective position and file name")
         exit(1)
 
-    snp_lists_files = readfiles(files)
+    snp_lists_files, tool_names = readfiles(files)
 
     stats = {}
-    tool_names = []
-    for f in files:
-        tool_names.append(os.path.basename(f))
+
 
     stats["tool_names"] = tool_names
     stats["total_snps"] = []

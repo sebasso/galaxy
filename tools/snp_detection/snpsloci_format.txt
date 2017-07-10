@@ -1,7 +1,8 @@
+toolName
 filename	position	base	identifier	meta..
 
 example:
-
+parsnp
 dataset_131.dat 74	A	>gi|471258596|gb|KC164505.2|
 dataset_131.dat	97	T	>gi|471258596|gb|KC164505.2|
 dataset_131.dat	98	G	>gi|471258596|gb|KC164505.2|

@@ -17,7 +17,7 @@
   <inputs>
     <param name="genome_list" type="data" multiple="true" label="Input genome files separated by ," format="fasta"/>
     <param name="reference_genome" format="fasta" type="data" label="Reference genome"/>
-    <param name="CPUS" type="integer" value="1" label="Num cpus" optional="false"/>
+    <param name="CPUS" type="integer" value="4" label="Num cpus" optional="false"/>
   </inputs>
 
    <outputs>
