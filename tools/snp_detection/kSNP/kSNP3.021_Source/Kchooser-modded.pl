@@ -24,7 +24,7 @@ This version uses the median length genomes at both steps
 =cut
 
 my $infile = $ARGV[0];
-my $jellypath = $ARGV[1]."/jellyfish";
+my $jellypath = $ARGV[1]."/".$ARGV[2]."/jellyfish";
 #print STDERR "PATH:\n";
 #print STDERR $ARGV[1];
 my @sequences = (); #holds sequence ID in col0, sequence in col1, sequence length in col2

@@ -6,7 +6,7 @@ from os.path import isfile, join
 
 #NOTE; works only on FASTA
 
-def execute_kChooser_on_all(in_file,path):
+def execute_kChooser_on_all(in_file,path,os_path):
 	files = []
 	with open(in_file,"r") as f:
 		files = f.readlines()
@@ -23,7 +23,7 @@ def execute_kChooser_on_all(in_file,path):
 	sys.stderr.write(os.getcwd())
 	sys.stderr.write("\n")
 	for file in filepaths:
-		proc = subprocess.Popen(['perl', perl_exec, file, path], stdout=subprocess.PIPE)
+		proc = subprocess.Popen(['perl', perl_exec, file, path, os_path], stdout=subprocess.PIPE)
 		allthis += int(proc.communicate()[0])
 
 	answer = allthis/len(filepaths)
@@ -50,6 +50,6 @@ def execute_kChooser_on_all(in_file,path):
 
 if __name__ == '__main__':
 	if sys.argv[1]:
-		execute_kChooser_on_all(sys.argv[1], sys.argv[2])
+		execute_kChooser_on_all(sys.argv[1], sys.argv[2], sys.argv[3])
 	else:
 		exit(0)
