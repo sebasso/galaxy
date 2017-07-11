@@ -137,7 +137,7 @@ doc/source/dev/schema.rst
 tools/snp_detection/parsnp/parsnp/muscle/bin
 tools/snp_detection/parsnp/parsnp/muscle/include
 tools/snp_detection/parsnp/parsnp/muscle/lib
-tools/snp_detection/parsnp/parsnp/muscle/libMuscle
+tools/snp_detection/parsnp/parsnp/muscle/libMuscle/*
 tools/snp_detection/parsnp/parsnp/muscle/config.log
 tools/snp_detection/parsnp/parsnp/muscle/autom4te.cache
 tools/snp_detection/parsnp/parsnp/muscle/config/compile

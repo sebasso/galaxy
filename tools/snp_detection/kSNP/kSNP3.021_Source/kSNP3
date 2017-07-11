@@ -149,10 +149,20 @@ if ($?SNPs_all) then
     printf "SNPs_all $SNPs_all\n"
 endif
 
+
+set OS=`uname`
+if ($OS == 'Darwin') then
+  set os_path="mac_specific"
+else
+  set os_path="linux_specific"
+endif
+printf "\n os_path:\n $os_path"
+
+
 if ($?kchooser) then
   if ($kchooser == "1") then
     printf "k before kchooser: $k\n"
-    set k=`python $kSNP/Kchooser-allFiles.py in_list $kSNP`
+    set k=`python $kSNP/Kchooser-allFiles.py in_list $kSNP $os_path`
     printf "sat k with kchooser k:$k\n"
   endif
 else
@@ -184,13 +194,7 @@ if ($?genbankFile  ) then
    echo "Genbank file for annotations (and any from NCBI with gi number which are automatically downloaded): $genbankFile"
  endif
 endif
-set OS=`uname`
-if ($OS == 'Darwin') then
-  set os_path="mac_specific"
-else
-  set os_path="linux_specific"
-endif
-printf "\n os_path:\n $os_path"
+
 #get the number of CPUs
 if !($?num_cpus) then
     #get the operating system
@@ -296,7 +300,7 @@ echo "Removing kmers that occur less than freq=average of median and mean kmer f
 date
 foreach f (fsplit*[0-9])
   awk '{print $2}' kmers_all.$f > ! freq.$f
-  set min_kmer_coverage=`$kSNP/get_quantile3 freq.$f`
+  set min_kmer_coverage=`$kSNP/$os_path/get_quantile3 freq.$f`
   echo "minimum kmer coverage for $f is $min_kmer_coverage"
   awk -v m=$min_kmer_coverage '$2>=m {print}' kmers_all.$f >! kmers.$f
 end
@@ -390,7 +394,7 @@ if (-s annotate_list) then
 	    set file=`grep -w  $genome fasta_list  | awk -F'\011' '{print $1}'`
 	    printf "genome: $genome  in Dir.$f\n"
 	    awk -F'\011' '{print ">" $1 "_" $2 "\n" $3 }' Dir.$f/SNPs >! Dir.$f/SNPs.fasta
-	    printf "$kSNP/mummer -maxmatch -l $k -b -c  Dir.$f/SNPs.fasta "'"'"$file"'"'" > Dir.$f/mummer.out\n" >> cmds_mummer
+	    printf "$kSNP/$os_path/mummer -maxmatch -l $k -b -c  Dir.$f/SNPs.fasta "'"'"$file"'"'" > Dir.$f/mummer.out\n" >> cmds_mummer
 	    printf "$kSNP/parse_mummer4kSNP3  Dir.$f/mummer.out  > Dir.$f/SNP.positions\n" >> cmds_parse_mummer
 	endif
     end

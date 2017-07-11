@@ -81,7 +81,7 @@ while (my $line=<IN>){
 	$out=$zarray[$count].".mers";
 	open OUT,">$out";
 	print OUT "$line";
-	
+
 	}
 }
 close OUT;
