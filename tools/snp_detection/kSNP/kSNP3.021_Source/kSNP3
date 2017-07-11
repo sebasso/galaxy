@@ -190,23 +190,23 @@ if !($?num_cpus) then
     #get the operating system
     set OS=`uname`
 
-    if ($OS == 'Darwin') then
+if ($OS == 'Darwin') then
 	echo "The operating system is $OS"
 	/usr/sbin/system_profiler SPHardwareDataType>wubba
 	set num_cpus=` awk '/Total Number of Cores/ {print $5}' wubba`
 	echo "There are $num_cpus CPUs"
 	rm wubba
 	##@ num_cpus=$num_proc
-    endif
+endif
 
-    if ($OS != 'Darwin') then
+if ($OS != 'Darwin') then
 	echo "The operating system is $OS"
 	set num_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
     endif
     if ($num_cpus < 1 ) then
 	set num_cpus=8
 	echo "Could not figure out the number of CPUs, will run 8 processes"
-    endif
+endif
 
 endif
 echo "Number CPUs: $num_cpus"
