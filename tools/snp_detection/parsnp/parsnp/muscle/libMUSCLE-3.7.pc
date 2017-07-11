@@ -1,4 +1,4 @@
-prefix=/usr/local
+prefix=/Users/sebastiansoberg/galaxy/tools/snp_detection/parsnp/parsnp/muscle
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
