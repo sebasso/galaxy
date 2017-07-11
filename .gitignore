@@ -165,3 +165,10 @@ tools/snp_detection/parsnp/parsnp/src/parsnp-MuscleInterface.o
 tools/snp_detection/parsnp/parsnp/src/parsnp-TMum.o
 tools/snp_detection/parsnp/parsnp/src/parsnp-iniFile.o
 tools/snp_detection/parsnp/parsnp/src/parsnp-parsnp.o
+
+tools/snp_detection/parsnp/parsnp/ft
+tools/snp_detection/parsnp/parsnp/harvest
+tools/snp_detection/parsnp/parsnp/nucmer
+tools/snp_detection/parsnp/parsnp/parsnp
+tools/snp_detection/parsnp/parsnp/phiprofile
+tools/snp_detection/parsnp/parsnp/show-coords

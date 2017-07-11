@@ -1,5 +1,6 @@
 #!/bin/bash
 #assuming brew or similar installed gcc to PATH /usr/local/bin/
+# && dependent on automake and autoconf  install with brew install automake
 # NOTE: gcc,cc and cxx must be exported so this script find their location.
 #export CC="/usr/local/Cellar/gcc49/4.9.2/bin/gcc"
 #export CXX="/usr/local/Cellar/gcc49/4.9.2/bin/g++"

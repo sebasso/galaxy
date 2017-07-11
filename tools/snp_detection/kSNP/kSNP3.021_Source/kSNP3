@@ -176,7 +176,7 @@ else
 endif
 
 if ( $?min_fraction_with_locus ) then
-echo "min_fraction_with_locus: $min_fraction_with_locus"
+  echo "min_fraction_with_locus: $min_fraction_with_locus"
 endif
 
 if ($?genbankFile  ) then
@@ -184,31 +184,36 @@ if ($?genbankFile  ) then
    echo "Genbank file for annotations (and any from NCBI with gi number which are automatically downloaded): $genbankFile"
  endif
 endif
-
+set OS=`uname`
+if ($OS == 'Darwin') then
+  set os_path="mac_specific"
+else
+  set os_path="linux_specific"
+endif
+printf "\n os_path:\n $os_path"
 #get the number of CPUs
 if !($?num_cpus) then
     #get the operating system
-    set OS=`uname`
-
-if ($OS == 'Darwin') then
-	echo "The operating system is $OS"
-	/usr/sbin/system_profiler SPHardwareDataType>wubba
-	set num_cpus=` awk '/Total Number of Cores/ {print $5}' wubba`
-	echo "There are $num_cpus CPUs"
-	rm wubba
+    if ($OS == 'Darwin') then
+    	echo "The operating system is $OS"
+    	/usr/sbin/system_profiler SPHardwareDataType>wubba
+    	set num_cpus=` awk '/Total Number of Cores/ {print $5}' wubba`
+    	echo "There are $num_cpus CPUs"
+      printf "\n os_path:\n $os_path"
+    	rm wubba
 	##@ num_cpus=$num_proc
-endif
-
-if ($OS != 'Darwin') then
-	echo "The operating system is $OS"
-	set num_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
     endif
-    if ($num_cpus < 1 ) then
-	set num_cpus=8
-	echo "Could not figure out the number of CPUs, will run 8 processes"
+
+  if ($OS != 'Darwin') then
+  	echo "The operating system is $OS"
+  	set num_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
+      endif
+      if ($num_cpus < 1 ) then
+  	set num_cpus=8
+  	echo "Could not figure out the number of CPUs, will run 8 processes"
+  endif
 endif
 
-endif
 echo "Number CPUs: $num_cpus"
 
 #chesk the fasta genome files to be sure line endings are Unix and fix if they are not
@@ -260,10 +265,10 @@ if ( $k <= 31  ) then
     foreach f (fsplit*[0-9])
       if !(-s kmers_all.$f) then
 	echo "$f"
-	$kSNP/jellyfish count -C -o Jelly.$f -m $k -s 1000000000  -t $num_cpus  $f
+	$kSNP/$os_path/jellyfish count -C -o Jelly.$f -m $k -s 1000000000  -t $num_cpus  $f
 	printf "" >! unsortedkmers.$f
 	foreach i (Jelly."$f"_*)
-	    $kSNP/jellyfish dump -c $i  >> unsortedkmers."$f"
+	    $kSNP/$os_path/jellyfish dump -c $i  >> unsortedkmers."$f"
 	end
     	sort unsortedkmers.$f >! kmers_all.$f
 	rm -f unsortedkmers.$f
@@ -448,7 +453,7 @@ $kSNP/SNPs_all_2_fasta_matrix3 SNPs_all SNPs_all_matrix.fasta SNPs_all_matrix
 ## Building ML FastTree tree from all SNPs
 
 if ($?ML) then
- $kSNP/FastTreeMP  -nt -gtr -slow SNPs_all_matrix.fasta >!  tree.ML.tre
+ $kSNP/$os_path/FastTreeMP  -nt -gtr -slow SNPs_all_matrix.fasta >!  tree.ML.tre
  printf "ML\n" >> tree_list1
  printf "ML\n" >> tree_list2
 endif
