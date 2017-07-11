@@ -441,9 +441,6 @@ if !($?ref_genome) then
     set ref_genome=`head -1 fileName2genomeName | awk '{print $2}'`
 endif
 
-if ($?vcf ) then
-    $kSNP/parse_SNPs2VCF3 SNPs_all VCF.$ref_genome.vcf  $ref_genome
-endif
 
 echo "Finished finding SNPs"
 date
