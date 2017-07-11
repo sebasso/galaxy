@@ -9,16 +9,16 @@
 #include "types.h"
 
 /* constants */
-#define NINDEF NULL
+#define NINDEF NULL 
 #define LINDEF -1
-#define MAXALPHA 5
+#define MAXALPHA 5 
 #define INITIAL csg->node
 #define FINAL 2
 #define FALSE 0
 #define TRUE 1
 #define LAST_SYMBOL 5
 
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
+#define MAX(x,y) ((x) > (y) ? (x) : (y)) 
 
 #define LG(state)                       ((state)->lg)
 #define OUT(state)                      (state)->nout
@@ -61,18 +61,17 @@ struct struct_csg {
 	ulong size;
 };
 
-inline CSG_Node *NEXT(CSG *csg, CSG_Node *source, int target) ;
-inline int GET_SOLID(CSG *csg, CSG_Node *source, CSG_Node *node_t);
+CSG_Node *NEXT(CSG *csg, CSG_Node *source, int target) ;
+int GET_SOLID(CSG *csg, CSG_Node *source, CSG_Node *node_t);
 
-inline int _conv(char c);
+int _conv(char c);
+char conv_(int c);
 
-inline char conv_(int c);
-
-inline CSG *new_CSG(CSG * csg_clone,ulong node_ini, const char *seq, ulong size, int setmem);
-inline void free_CSG(CSG *);
-inline void build_CSG(CSG *csg, const char *s, long int size, int out);
-inline int prefix_comu(CSG *csg, CSG_Node *state, const char *pendent);
-inline void find_leaves(CSG *csg);
+CSG *new_CSG(CSG * csg_clone,ulong node_ini, const char *seq, ulong size, int setmem);
+void free_CSG(CSG *);
+void build_CSG(CSG *csg, const char *s, long int size, int out);
+int prefix_comu(CSG *csg, CSG_Node *state, const char *pendent);
+void find_leaves(CSG *csg);
 
 #endif
 

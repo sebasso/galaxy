@@ -1,5 +1,3 @@
-# See the LICENSE file included with this software for license information.
-
 import os, sys, string, getopt, random,subprocess, time, glob,operator, math, datetime,numpy #pysam
 import signal
 import inspect
@@ -1289,3 +1287,4 @@ if __name__ == "__main__":
         if binary_type == "osx":
             print ">>Launching gingr.."
             os.system("open -n %s --args %s/parsnp.ggr"%(use_gingr,outputDir))
+

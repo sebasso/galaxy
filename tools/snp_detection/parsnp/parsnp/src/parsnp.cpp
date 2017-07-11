@@ -1,3 +1,52 @@
+/////////////////////////////////////////
+// parsnp.cpp
+// main module for parsnp Aligner
+// takes a single configuration file as input, output is XMFA
+//
+// COPYRIGHT LICENSE
+// 
+// Copyright (c) 2014, Battelle National Biodefense Institute (BNBI);
+// all rights reserved. Authored by: Todd J Treangen
+// 
+// This Software was prepared for the Department of Homeland Security
+// (DHS) by the Battelle National Biodefense Institute, LLC (BNBI) as
+// part of contract HSHQDC-07-C-00020 to manage and operate the National
+// Biodefense Analysis and Countermeasures Center (NBACC), a Federally
+// Funded Research and Development Center.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+// 
+// * Redistributions of source code must retain the above copyright
+//   notice, this list of conditions and the following disclaimer.
+// 
+// * Redistributions in binary form must reproduce the above copyright
+//   notice, this list of conditions and the following disclaimer in the
+//   documentation and/or other materials provided with the distribution.
+// 
+// * Neither the name of the Battelle National Biodefense Institute nor
+//   the names of its contributors may be used to endorse or promote
+//   products derived from this software without specific prior written
+//   permission.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// 
+/////////////////////////////////////////
+
+// See the LICENSE file included with this software for license information.
+
+
 
 #include <cstdlib>
 #include <omp.h>
@@ -23,7 +72,7 @@
 // {{{ extern C
 extern "C"
 {
-
+#include "csgmum/csg.c"
 #include "csgmum/mum.c"
 }
 // }}}
@@ -42,10 +91,10 @@ Aligner::Aligner()
 Aligner::Aligner( vector<string>& genomes , vector<string>& files, int c, int d, int q, int p, string anchors, \
                  string mums, bool filter,  vector<char *>& clustalparams,\
 		  vector<string>& fasta, float factor ,bool harsh,vector<float>& gcCount,vector<float>& atCount, bool shustring, int doAlign, bool gridRun, int cores, bool extendmums,map<string, int>& header_to_index, vector < map<int,string> > & pos_to_header, vector<string>& headers, bool calc_mumi, float diag_diff, string prefix, string outdir, bool recomb_filter, bool doUnalign)
-        : d(d), q(q),p(p)
+: d(d), q(q),p(p)
 {
-
-
+    
+    
     // {{{ variables
     this->doUnalign = doUnalign;
     this->diag_diff = diag_diff;
@@ -104,7 +153,7 @@ Aligner::Aligner( vector<string>& genomes , vector<string>& files, int c, int d,
     this->p   = p;
     this->minanchor = anchors;
     this->minmum = mums;
-
+    
     // }}}
 }
 // }}}
@@ -122,7 +171,7 @@ Aligner::~Aligner()
 /////////////////////////////////////////
 bool Aligner::doWork(void)
 {
-
+    
     // {{{ variables
     int minsize,ppmumcount;
     vector<TMum> mums;
@@ -130,13 +179,13 @@ bool Aligner::doWork(void)
     vector<TMum>::iterator mt;
     vector<TRegion>::iterator rt;
     vector<Cluster>::iterator ct;
-
+    
     TRegion currRegion, aRegion;
     TRegion lRegion, rRegion;
-
+    
     // consider alternative using regions
     vector<TRegion>::iterator front;
-
+ 
     ppmumcount = 0;
 
     while ( ! this->regions.empty() )
@@ -144,42 +193,42 @@ bool Aligner::doWork(void)
         currRegion = this->regions.front();
         this->regions.erase(this->regions.begin());
         mums.clear();
-
+        
         this->setMums1(currRegion, mums, false, false);
         ppmumcount++;
         int mumcount = int(mums.size());
         front = this->regions.begin();
-
+        
         bool adjacentLeft = false;
         bool adjacentRight = false;
         bool pushedBackLeft = false;
         bool pushedBackRight = false;
-
+        
         // {{{ for (int i = 0; i < mumcount; i++)
-
+        
         for ( int i = 0; i < mumcount; i++)
         {
-
+            
             adjacentLeft = true;
             adjacentRight = true;
             pushedBackLeft = false;
             pushedBackRight = false;
-
+            
             // left
             if ( i == 0 )
             {
                 lRegion = this->determineRegion( mums.at(i),  1 );
                 adjacentLeft = true;
             }
-
+            
             else if ( lRegion == rRegion  )
             {
                 adjacentLeft = true;
             }
-
+            
             // right
             rRegion = this->determineRegion( mums.at(i),  0 );
-
+            
             if ( lRegion.slength > this->q  )
             {
                 this->regions.push_back(lRegion);
@@ -190,14 +239,14 @@ bool Aligner::doWork(void)
                 this->regions.push_back(rRegion);
                 pushedBackRight = true;
             }
-
+            
             if ( i+1 == mumcount )
                 adjacentRight = true;
             else
             {
                 // left of next mum
                 lRegion = this->determineRegion( mums.at(i+1),  1 );
-
+                
                 if ( lRegion == rRegion  )
                 {
                     adjacentRight = true;
@@ -210,7 +259,7 @@ bool Aligner::doWork(void)
                 minsize = int(0.5*log10(double( mums.at(i).slength))/log10(2.0));
                 if ( mums.at(i).length <= minsize )
                 {
-
+                    
                     //update mum layout
                     for ( ssize k = 0; k < n; k++)
                     {
@@ -218,8 +267,8 @@ bool Aligner::doWork(void)
                         for ( int m = mums.at(i).start[k]; m < mums.at(i).end[k]; m++)
                             this->mumlayout[k][m] = 0;
                     }
-
-
+                    
+                    
                     i--;
                     //update mumcount
                     mumcount -=1;
@@ -231,16 +280,16 @@ bool Aligner::doWork(void)
                         this->regions.pop_back();
                 }
             }
-
+            
             else
                 this->mums.push_back(mums.at(i));
-
+            
         }
         // }}}
-
+        
         if ( !(this->regions.empty()) )
             sort ( this->regions.begin(), this->regions.end() );
-
+        
         ulong rsize = this->regions.size();
         if ( rsize )
         {
@@ -254,11 +303,11 @@ bool Aligner::doWork(void)
                 }
             }
         }
-
+        
     }
-
+    
     // }}}
-
+    
     bool empty = true;
     if (this->mums.empty() || this->mums.size() == 0 )
         empty = false;
@@ -271,7 +320,7 @@ bool Aligner::doWork(void)
 // Aligner::filterRandom1
 // Simple MUM filter
 // MUMs <= minsize and not collinear to adjacent MUMs are removed
-// helps filter out spurious matches
+// helps filter out spurious matches 
 /////////////////////////////////////////
 // {{{ void Aligner::filterRandom(int rvalue)
 void Aligner::filterRandom1(int rvalue )
@@ -281,13 +330,13 @@ void Aligner::filterRandom1(int rvalue )
     TMum mt, nt, prev_mum;
     string sOutput;
     bool adjacentR = true;
-
+    
     sort( this->mums.begin(), this->mums.end());
-
+    
     ulong numums = this->mums.size();
     for ( ulong msize = 0; msize < numums-1; msize++)
     {
-
+        
         //for all clusters, select those that have size < minsize
         // then check to see for those IF they have atleast 1 adjacent mum to them that is <= d
         // if not, delete
@@ -314,7 +363,7 @@ void Aligner::filterRandom1(int rvalue )
             {
                 for ( int k = 0; k < this->n; k++)
                 {
-
+                    
                     if ( abs(nt.start.at(k)) - abs(mt.end.at(k)) < 0  || abs(nt.start.at(k)) - abs(mt.end.at(k)) >  5000 )
                     {
                         adjacentR = false;
@@ -355,14 +404,14 @@ void Aligner::filterRandom1(int rvalue )
                 // mum is not adjacent to any other mum and has small size, delete
                 this->filtered+=1;
                 this->rndmums.push_back(mt);
-
+                
                 for ( ssize k = 0; k < this->n; k++)
                 {
                     for ( int m = mt.start.at(k); m <  mt.end.at(k); m++)
                     {
                         this->mumlayout[k][m] = 0;
                     }
-
+                    
                 }
                 this->mums.erase(this->mums.begin()+msize);
 
@@ -383,41 +432,41 @@ void Aligner::filterRandom1(int rvalue )
 void Aligner::filterRandomClustersSimple1( void )
 {
     vector<long> start, end;
-
+    
     Cluster ct;
     string sOutput;
     bool adjacentR = true;
-
+    
     sort( this->clusters.begin(), this->clusters.end());
     TMum mt;
     ulong nsize = 0;
     ulong numclusters = this->clusters.size();
-
+    
     vector<long> clustersToDelete;
     for ( ulong csize = 0; csize < numclusters-1; csize++)
     {
         if ( this->clusters.at(csize).length <= this->c )
         {
             this->filtered_clusters+=1;
-
+            
             this->rndclusters.push_back(this->clusters.at(csize));
             ulong mumid = 0;
             ulong numums =  this->clusters.at(csize).mums.size();
             for ( ulong msize = 0; msize < numums; msize++)
             {
-
+                
                 mt = this->clusters.at(csize).mums.at(msize);
                 this->filtered+=1;
-
+                
                 this->rndmums.push_back(mt);
-
+                
                 for ( ssize k = 0; k < this->n; k++)
                 {
                     for ( int m = mt.start.at(k); m <  mt.end.at(k); m++)
                     {
                         this->mumlayout[k][m] = 0;
                     }
-
+                    
                 }
                 mumid = this->clusters.at(csize).mums.at(msize).getid();
                 ulong nummums = this->mums.size();
@@ -439,9 +488,9 @@ void Aligner::filterRandomClustersSimple1( void )
             if(csize < 0 )
                 csize = 0;
             numclusters-=1;
-
+            
         }
-
+        
     }
 
 }
@@ -454,14 +503,14 @@ void Aligner::filterRandomClustersSimple1( void )
 // {{{ void Aligner::writeOutput(string psnp, vector<float>& coveragerow)
 void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
 {
-
+    
     if (this->doAlign)
         cerr << "Writing output files & aligning LCBs..." << endl;
     //string psnp = "psnp";
     string prefix = this->outdir;
     prefix.append("/");
-
-
+    
+    
     string test =this->outdir;
     string lcbprefix = this->outdir;
     string lcbdir = this->outdir;
@@ -493,21 +542,21 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
     }
     string xmfasfile = prefix+ psnp + ".xmfa";
     ofstream xmfafile ( xmfasfile.c_str());
-
+    
     string logfile = prefix+ psnp + ".log";
     ofstream log ( logfile.c_str());
-
+    
     //determine the largest file
     long largest = 0;
     long cur = 0;
     for ( ssize i = 0; i < this->n; i++)
     {
         cur = this->genomes[i].size();
-
+        
         if ( cur > largest )
             largest = cur;
     }
-
+    
     string s1;
     long l1, l2;
     uint cluster_number = 0;
@@ -546,7 +595,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
         }
     }
     xmfafile << "#IntervalCount " << total_clusters << endl;
-
+    
     string mumfile2 = "allmums.out";
     ofstream mumfile(mumfile2.c_str());
     std::vector< vector<string> > tempalign2(allclusters.size(),std::vector<string>(nnum));//[allclusters.size()][nnum];
@@ -568,7 +617,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                 {
                     char bb[9];
                     sprintf(bb,"%d",z+1);// C-style string formed without null
-
+                    
                     string lcbdir = lcbprefix + bb;
                     string lcbfile = lcbdir +"/"+"seq.fna";
                     if (1)
@@ -592,7 +641,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                 continue;
         }
     }
-
+    
 #pragma omp parallel num_threads(numt) shared(tempalign2) private(pfilenum,b)
     {
 #pragma omp for schedule(dynamic)//(static, 1)
@@ -609,9 +658,9 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
             {
                 continue;
             }
-
+            
             vector<string> tmpalign(nnum,"");
-
+            
             for ( vector<TMum>::iterator dt = ct.mums.begin(); dt != ct.mums.end(); dt++)
             {
                 ::std::vector<string> regalign(nnum,"");
@@ -627,10 +676,10 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                     {
                         if ( 1)
                         {
-                            string s1;
+                              string s1;
                             if ( !ct.mums.at(0).isforward.at(i) )
                             {
-
+                                
                                 string n1 = reversec(allgenomes[i].substr(dt->start.at(i),dt->length));
                                 transform(n1.begin(), n1.end(), n1.begin(), ::tolower);
                                 tempalign2[tt][i].append(n1);
@@ -642,13 +691,13 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                                 tempalign2[tt][i].append(n1);
                             }
                         }
-
+                        
                         //}
                     }
                     //cout << endl;
                 }
-                    //	  }
-                    //}
+                //	  }
+                //}
                 else if ( dt+1 != ct.mums.end() )
                 {
 
@@ -668,7 +717,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                                     string n1 = reversec(allgenomes[i].substr(dt->start.at(i),dt->length));
                                     transform(n1.begin(), n1.end(), n1.begin(), ::tolower);
                                     tempalign2[tt][i].append(n1);
-
+                                    
                                     if (dt->start.at(i)-(dt+1)->end.at(i) >= 1)
                                     {
                                         s1 = reversec(allgenomes[i].substr((dt+1)->end.at(i),(dt->start.at(i)-(dt+1)->end.at(i))));
@@ -710,9 +759,9 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                             }
                         }
                     }
-
+                    
                 } //END if dt+1 != ct->mums.end
-
+                
                 uint max_length_region = 0;
                 uint min_length_region = 1000000;
                 vector<bool> skipped(nnum,0);
@@ -720,10 +769,10 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                 if (ct.type && dt+1 != ct.mums.end() && doalign)
                 {
                     vector<string> seq2aln;
-
+                    
                     for (ssize k = 0; k < nnum; k++)
                     {
-
+                        
                         seq2aln.push_back("");
                         if ( 1)
                         {
@@ -746,11 +795,11 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                                 int width = 80;
                                 ssize t = 0;
                                 string s1 = regalign[w];
-
+                                
                                 if (s1.size() == 0)
                                 {
                                     seq2aln[w] = "N";
-                                }
+                                  }
                                 else
                                 {
                                     seq2aln[w] = s1;
@@ -758,7 +807,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                                     {
                                         t+= width;
                                     }
-
+                                    
                                 }
                             }
                         }
@@ -766,7 +815,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                         {
                             for ( ssize j = 0; j < nnum; j++)
                             {
-
+                                
                                 if (1)
                                 {
                                     if (skipped.at(j))
@@ -784,7 +833,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                         }
                         else
                         {
-
+                            
                             vector<string> alignment_result;
                             bool ok = true;
                             if (seq2aln.size() > 1)
@@ -799,11 +848,11 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                                 }
                                 if (ok)
                                 {
-
+                                    
                                     bool align_success = false;
                                     MuscleInterface gmi = MuscleInterface();
                                     align_success = gmi.CallMuscleFast(alignment_result,seq2aln);
-
+                                    
                                 }
                             }
 
@@ -864,14 +913,14 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                     }
                 }
             }// END for ( vector<TMum>::iterator dt = ct->mums.begin(); dt != ct->mums.end(); dt++)
-
+            
         }// end for ( vector<Cluster>::iterator ct = this->clusters.begin(); ct != this->clusters.end(); ct++)
     }
 
     for ( ssize z = 0; z < allclusters.size(); z++)
     {
-        Cluster ct = allclusters.at(z);
-        if (ct.type == 1 && ct.mums.size() > 0 && doalign != 0 && tempalign2[z][0].size() > (this->c * 1))
+	    Cluster ct = allclusters.at(z);
+	    if (ct.type == 1 && ct.mums.size() > 0 && doalign != 0 && tempalign2[z][0].size() > (this->c * 1))
         {
             sprintf(b,"%d",(int)z+1);// C-style string formed without null
             ofstream clcbfile;
@@ -886,7 +935,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                 if ( 1)
                 {
                     int width = 80;
-
+                    
                     ssize k = 0;
                     string s1s = tempalign2[z][i];
                     concatalign.at(i) += s1s;
@@ -894,7 +943,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                     {
                         s1s.erase(  s1s.find('\n'), s1s.find('\n')+1 );
                     }
-
+                    
                     if ( ct.mums.at(0).isforward.at(i) )
                     {
                         xmfafile << ">" << i+1 << ":" << ct.start.at(i) <<  "-" << ct.end.at(i)-1 << " ";
@@ -939,7 +988,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                             seqstart = laststart;
                             break;
                         }
-
+                        
                     }
                     if (hit1 && !hit2)
                     {
@@ -980,14 +1029,14 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
             }
             xmfafile << "=" << endl;
         }
-        else
-            continue;
+	    else
+	    	continue;
     }
-
-
+    
+    
     float percent;
     //cout << this->aligned <<   " " << this->genomes.at(0).size() << endl;
-
+    
     log << "Number of sequences analyzed:" << setiosflags(ios::fixed) << setprecision(1) << setw(10) << this->n << endl << endl;
     for ( ssize i = 0; i < this->n; i ++)
     {
@@ -1000,7 +1049,7 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
             log <<  " AT:"<< setw(10) << setiosflags(ios::fixed) << setprecision(1) << this->atCount.at(i) << endl;
         }
     }
-
+    
     log <<  setw(2) << setiosflags(ios::left) << "d value:   " << setw(2) << this->d << endl;
     log <<  setw(2) << "q value:   " << setw(2) << this->q << endl << endl;
     log << setw(2) << "Mum anchor size:   " << setw(2) << this->l << endl;
@@ -1014,8 +1063,8 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
     log << setw(2) << "Minimum Cluster length:   "<< setw(2) << this->c << endl;
     log << setw(2) << "Number of MUMs filtered:   "<< setw(2) << this->filtered << endl;
     log << setw(2) << "Number of Clusters filtered:   "<< setw(2) << this->filtered_clusters << endl << endl;
-
-
+    
+    
     percent = (float)(this->aligned)/(float)(this->genomes.at(0).size());
     //count number of actual clusters
     long ccount = 0;
@@ -1023,27 +1072,27 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
     {
         if (ct->type && ct->mums.size()>0)
             ccount++;
-
-
+        
+        
     }
     log << setw(2) << "Number of clusters created:   "<< setw(2) << ccount << endl;
     if( this->clusters.size() == 0)
         log << setw(2) << "Number of clusters created:   " << setw(2) << "NONE" <<  endl;
     log << setw(2) << "Average number of MUMs per cluster:   "<< setw(2) << this->mums.size()/ccount << endl;
-
-
+    
+    
     long avg = 0;
     vector<long> coverage;
     long totcoverage =0;
     long totsize = 0;
-
-
+    
+    
     for ( ssize i = 0; i < n; i ++ )
     {
         coverage.push_back(0);
     }
-
-
+    
+    
     for ( ssize i = 0; i < n; i ++ )
     {
         if ( 1)
@@ -1069,11 +1118,11 @@ void Aligner::writeOutput(string psnp,vector<float>& coveragerow)
                         avg += abs((ct->mums.front().start.at(i)+ct->mums.front().length)-ct->mums.back().start.at(i));
                     }
                 }
-
+                
             }
         }
     }
-
+    
     log << setw(2) << "Average cluster length:   "<< avg/ccount <<  " bps" << endl;
     for ( ssize i = 0; i < n; i ++ )
     {
@@ -1113,13 +1162,13 @@ TRegion  Aligner::determineRegion( Cluster c1,  bool LEFT )
     vector<long> start;
     vector<long> end;
     vector<string> bps;
-
+    
     // calculate leftmost positions
     if ( LEFT )
     {
         for( ssize i = 0; i < this->n; i++)
         {
-
+            
             if (1)
             {
                 mumfound = 0;
@@ -1145,13 +1194,13 @@ TRegion  Aligner::determineRegion( Cluster c1,  bool LEFT )
                 end.push_back(c1.start[i]-1);
             }
         }
-
+        
         TRegion r(start, end );
         start.clear();
         end.clear();
-
+        
         return r;
-
+        
     }
     else
     {
@@ -1186,13 +1235,13 @@ TRegion  Aligner::determineRegion( Cluster c1,  bool LEFT )
                 //pass
             }
         }
-
+        
         TRegion r(start, end );
         start.clear();
         end.clear();
         return r;
     }
-
+    
     //return r;
     // if no mums found between this cluster and any adjacent
     //return mumfound;
@@ -1208,31 +1257,31 @@ string Aligner::reversec( string seq )
     {
         switch(toupper(*start))
         {
-
+                
             case 'A':
-
+                
                 genome.append("T");
                 break;
             case 'G':
-
+                
                 genome.append("C");
                 break;
             case 'C':
-
+                
                 genome.append("G");
                 break;
             case 'T':
-
+                
                 genome.append("A");
                 break;
-
+                
             case 'N':
                 genome.append("N");
                 break;
             case '$':
                 genome.append("N");
                 break;
-
+                
             case 'n':
                 genome.append("N");//
                 break;
@@ -1287,16 +1336,16 @@ string Aligner::reversec( string seq )
                 break;
             case '.':
                 break;
-
+                
             default:
                 genome.append("N");
                 continue;
         }
-
+               
     }
     // }}}
-
-
+    
+    
     std::reverse(genome.begin(),genome.end());
     return genome;
 }
@@ -1307,7 +1356,7 @@ string Aligner::reversec( string seq )
 /////////////////////////////////////////
 void Aligner::trim( TMum& mum )
 {
-
+    
     for (ssize j = 0; j < this->n; j++)
     {
         if ( 1)
@@ -1321,7 +1370,7 @@ void Aligner::trim( TMum& mum )
                     if (this->mumlayout[j][m] != 0)
                     {
                         mum.trimleft();
-
+                        
                     }
                     else
                     {
@@ -1370,19 +1419,19 @@ void Aligner::trim( TMum& mum )
                     //remove overlaps, if existing mum overlaps with current mum, trim
                     if (this->mumlayout[j][m] != 0)
                     {
-                        mum.trimleft();
+                        mum.trimleft();                       
                     }
                     else
                     {
                         //cant trim mum any further
                         break;
-
+                        
                     }
                 }
             }
         }
     }
-
+    
 }
 /////////////////////////////////////////
 // Aligner::setMums1
@@ -1430,9 +1479,9 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
         p = r1.length.at(0);
     else
         p = this->p;
-
+    
     while ( partpos < (ssize)r1.length.at(0) )
-    {
+    {        
         if ( partpos + p > (ssize)r1.length.at(0) )
         {
 
@@ -1445,16 +1494,16 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                 //}
             }
         }
-
+        
         rs[0].sequence = (char *)calloc( p+10, sizeof(char));
         rs[0].rc = (char *)calloc( p+10, sizeof(char));
         strcpy(rs[0].sequence,(char *)this->genomes.at(0).substr(r1.start.at(0) + partpos,p).append(1,(char)5).c_str());
         strcpy(rs[0].rc, (char *)reversec(this->genomes.at(0).substr(r1.start.at(0) + partpos,p)).append(1,(char)5).c_str());
-
+        
         rs[0].len_region  = p;
         rs[0].ini_region =  r1.start.at(0)+partpos;
         partpos += p;
-
+        
         if ( firstrun )
         {
             for ( ssize a = 1; a < this->n; a++)
@@ -1462,24 +1511,24 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                 rs[a].sequence = (char *)calloc( r1.length.at(a)+10, sizeof(char));
                 rs[a].rc = (char *)calloc( r1.length.at(a)+10, sizeof(char));
                 strcpy(rs[a].sequence,(char *)this->genomes.at(a).substr(r1.start.at(a),r1.length.at(a)).append(1,(char)5).c_str());
-
+                
                 strcpy(rs[a].rc,(char *)reversec(this->genomes.at(a).substr(r1.start.at(a),r1.length.at(a))).append(1,(char)5).c_str());
                 rs[a].len_region  = r1.length.at(a);
                 rs[a].ini_region =  r1.start.at(a);
             }
         }
-
+        
         CSG * csg = 0;
         time_t start,end;
         double dif = 0;
         time ( &start);
-
+        
         if(anchors)
             cerr <<  endl << "        Constructing compressed suffix graph...\n";
         csg = new_CSG(csg,int(factor)*rs[0].len_region,rs[0].sequence,rs[0].len_region,0);
         build_CSG(csg, rs[0].sequence, rs[0].len_region, 0);
         find_leaves(csg);
-
+        
         time ( &end);
         dif = difftime(end,start);
         if(anchors)
@@ -1491,12 +1540,12 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
         PairRC   =  new UM[rs[0].len_region];
         SPF = new SP[this->n-1];
         SPR = new SP[this->n-1];
-
-
+        
+        
         time ( &start);
         if(anchors)
             cerr << "        Performing initial search for exact matches in the sequences...\n";
-
+        
         for (int i = 0; i < int(rs[0].len_region); i++)
         {
             Pair[i].UP = Pair[i].EP = Master[i].UP = 0;
@@ -1541,8 +1590,8 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
 
         for ( ssize k = 0; k < rs[0].len_region; k++)
         {
-
-
+            
+            
             //SP can be >= when in UM part of MUM
             //SP--UP--------EP
             // SP-UP--------EP
@@ -1565,9 +1614,9 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
             k_SP = k;
             if ((Master[k].EP > M_EP) && (Master[k].UP < Master[k].EP))
             {
-
+                
                 M_EP = Master[k].EP;
-
+                
                 M_LON = M_EP-k;
                 if (M_LON >= minsize)
                 {
@@ -1575,17 +1624,17 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                     tmum.forward = (char *)malloc(sizeof(char) * this->n);
                     tmum.DSP =  (ulong *)malloc(sizeof(ulong) * this->n);
                     tmum.forward[0] = 1;
-
+                    
                     if ( tmum.forward[0] )
                         tmum.DSP[0] =  k + 1 + rs[0].ini_region;
                     else
                         tmum.DSP[0] =  (k + 1 + rs[0].ini_region);
-
-
+    
+                    
                     for (ssize j = 1; j < this->n; j++)
                     {
                         tmum.forward[j] = SPF[j-1].forward[k];
-
+                        
                         if ( tmum.forward[j] )
                             tmum.DSP[j] =  SPF[j-1].MSP[k] + 1 + rs[j].ini_region;
                         else
@@ -1595,15 +1644,15 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                     }
                     tmum.LON = M_LON;
                     num_mums++;
-
+                    
                     list_mums.push_back(tmum);
                 }
             }
             M_UP = Master[k].UP;
             M_EP = Master[k].EP;
         }
-
-
+        
+       
         delete[] Master;
         delete [] MasterRC;
         delete[] Pair;
@@ -1617,7 +1666,7 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
         delete [] tempMSP;
         delete [] SPF;
         delete [] SPR;
-
+        
 
         if (1)
         {
@@ -1641,10 +1690,10 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                     }
                     else
                     {
-                        //check again to see if this mum is not maximal
+                        //check again to see if this mum is not maximal                      
                         int start = 0;
                         bool maximal = false;
-
+                        
                         for ( ssize k = n-1; k < n; k++)
                         {
                             start = this->mumlayout[j][list_mums[i].DSP[j]-1];
@@ -1665,11 +1714,11 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                             {
                                 //else this mum is non-maximal, consider it a bad mum and exit loop
                                 badmum = true;
-
+                                
                                 break;
                             }
                         }
-
+                        
                     }
                     startpos.push_back(list_mums[i].DSP[j]-1);
                 }
@@ -1677,7 +1726,7 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                     continue;
                 else
                 {
-
+                    
                     vector<int> isforward;
                     for ( int t = 0 ; t < this->n; t++)
                     {
@@ -1715,8 +1764,8 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                         }
                         l2 = mum.length;
                         s1 = genomes[k].substr(l1, l2);
-
-
+                        
+                        
                         if ( !mum.isforward.at(k) )
                         {
                             s1 = reversec(s1);
@@ -1727,8 +1776,8 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                         }
                         if ( badmum )
                             break;
-
-
+                        
+                        
                     }
                     if ( badmum && 1)
                         continue;
@@ -1738,9 +1787,9 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
                         for ( int m = mum.start[k]; m < mum.end[k]; m++)
                             this->mumlayout[k][m] =1;//+= 1;
                     }
-
+                    
                     mum.slength = r1.slength;
-
+                    
                     for( int l = 0; l < 1; l++)
                     {
                         mums.push_back(mum);
@@ -1756,18 +1805,18 @@ void Aligner::setMums1(TRegion r1, vector<TMum>& mums, bool anchors = true, bool
         if(anchors)
             printf("                 MUM anchor search elapsed time: %.0lf seconds\n\n",dif);
         free_CSG(csg);
-
+        
     }
     //} //end omp parallel for on partpos
-
+    
     for ( ssize a = 0; a < n; a++)
     {
         delete rs[a].sequence;
         delete rs[a].rc;
     }
-
+    
     delete[] rs;
-
+    
 }
 /////////////////////////////////////////
 // Aligner::setMumi
@@ -1788,7 +1837,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
     bool extendmums = this->extendmums;
     string sOutput;
     bool firstrun = true;
-
+    
     // the minsize applies to the genome region with the longest length
     // so that minsize has statistical importance w.r.t llength
     if (anchors)
@@ -1808,7 +1857,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
     IRegion* rs = new IRegion[this->n];
     //record current position
     ssize partpos = 0;
-
+    
     //check if genome is larger than partition
     if ( this->p > r1.length.at(0) )
         p = r1.length.at(0);
@@ -1816,7 +1865,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
         p = this->p;
 
     while ( partpos < (ssize)r1.length.at(0) && partpos < p)
-    {
+    {       
         if ( partpos + p > (ssize)r1.length.at(0) )
         {
             // if this is true, we have some partition at
@@ -1829,10 +1878,10 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                 partpos = partpos -50;
             }
         }
-
+        
         rs[0].sequence = (char *)calloc( p+10, sizeof(char));
         rs[0].rc = (char *)calloc( p+10, sizeof(char));
-
+        
         strcpy(rs[0].sequence,(char *)this->genomes.at(0).substr(r1.start.at(0) + partpos,p).append(1,(char)5).c_str());
         strcpy(rs[0].rc, (char *)reversec(this->genomes.at(0).substr(r1.start.at(0) + partpos,p)).append(1,(char)5).c_str());
         rs[0].len_region  = p;
@@ -1851,25 +1900,25 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                 rs[a].ini_region =  r1.start.at(a);
             }
         }
-
+              
         time_t start,end;
         double dif = 0;
         time ( &start);
-
+        
         if(anchors)
             cerr <<  endl << "        Constructing compressed suffix graph...\n";
-
-
+        
+        
         time ( &end);
         dif = difftime(end,start);
         if(anchors)
             printf("                 Compressed suffix graph construction elapsed time: %.0lf seconds\n\n",dif);
-
+        
         time ( &start);
         if(anchors)
             cerr << "        Calculting pairwise MUMi distances...\n";
-
-
+        
+        
         FILE* mumifile;
         string mmf = this->outdir;
         cout << mmf << endl;
@@ -1889,9 +1938,9 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
             for (iix = 0; iix < this->n-1; iix++)
             {
                 map<int, int> amums;
-
-
-
+                
+                
+                
                 int total_M_LON = 0;
                 UM* Master   = new UM[rs[0].len_region];
                 UM* MasterRC   = new UM[rs[0].len_region];
@@ -1904,7 +1953,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                 SPF[0].forward = new char[rs[0].len_region];
                 SPR[0].forward = new char[rs[0].len_region];
                 ulong* tempMSP = new ulong[rs[0].len_region];
-
+                
                 for ( int j = 0; j < rs[0].len_region;j++)
                 {
                     SPF[0].forward[j] = (char)1;
@@ -1913,7 +1962,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                     amums[j] = 0;
                 }
                 int tid = omp_get_thread_num();
-
+                
                 for (int ix = 0; ix < int(rs[0].len_region); ix++)
                 {
                     Pair[ix].UP = Pair[ix].EP = Master[ix].UP = 0;
@@ -1921,9 +1970,9 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                     Master[ix].EP = rs[0].len_region;
                     MasterRC[ix].EP = rs[0].len_region;
                 }
-
+                
                 Find_UM(csg, rs[iix+1].sequence, SPF[0].MSP,Pair);
-                Find_UM(csg, rs[iix+1].rc, tempMSP, PairRC);
+                Find_UM(csg, rs[iix+1].rc, tempMSP, PairRC);                
                 Intersect_UM(csg, Master, Pair, rs[0].len_region, SPF[0].MSP);
                 Intersect_UM(csg, MasterRC, PairRC, rs[0].len_region, tempMSP);
                 Merge_Master( Master, MasterRC, rs[0].len_region, rs[iix+1].len_region, SPF, SPR, tempMSP, 0);
@@ -1946,7 +1995,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                         next_EP1 =  k + 1+rs[0].len_region;
                         next_UP1 = k + 1+rs[0].len_region;
                     }
-
+                    
                     curr_EP1 = Master[k].EP;
                     curr_UP1 = Master[k].UP;
                     k_SP1 = k;
@@ -1955,7 +2004,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                     {
                         totsize +=1;
                         M_EP1 = Master[k].EP;
-
+                        
                         M_LON1 = M_EP1-k;
                         int ii = 0;
                         if (M_LON1 >= 15)
@@ -1978,7 +2027,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                 {
                     total_M_LON += ip->second;
                 }
-
+                
                 float avg_region_len = float(rs[0].len_region+rs[iix+1].len_region)/2.0;
                 int minlen = std::min(rs[0].len_region,rs[iix+1].len_region);
                 minlen = rs[0].len_region;
@@ -1999,10 +2048,10 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
                 delete []  SPR[0].MSP;
                 delete SPF;
                 delete SPR;
-
+                
             }
         }
-
+        
         //mumifile.close();
         fclose(mumifile);
         free_CSG(csg);
@@ -2010,18 +2059,18 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
         dif = difftime(end,start);
         if(anchors)
             printf("                 MUMi pairwise distance calculation finished: %.0lf seconds\n\n",dif);
-
+            
     }
-
+    
     for ( ssize a = 0; a < n; a++)
     {
         delete rs[a].sequence;
         delete rs[a].rc;
     }
-
+    
     delete[] rs;
     return;
-
+    
 }
 // {{{ bool Aligner::setInitialClusters(void)
 /////////////////////////////////////////
@@ -2030,7 +2079,7 @@ void Aligner::setMumi(TRegion r1, vector<TMum>& mums, bool anchors = true, bool 
 /////////////////////////////////////////
 bool Aligner::setInitialClusters(void)
 {
-
+    
     vector<long> start, end;
     vector<TMum> mums;
     ssize i = 0;
@@ -2040,7 +2089,7 @@ bool Aligner::setInitialClusters(void)
         end.push_back(this->genomes.at(i).length());
         i++;
     }
-
+    
     TRegion sRegion( start, end  );
     if (!this->calc_mumi)
         this->setMums1( sRegion, mums, true, true);
@@ -2053,10 +2102,10 @@ bool Aligner::setInitialClusters(void)
     this->anchors = mums;
     for ( i = 0; i < mums.size(); i++)
     {
-        Cluster cluster(this->mums.at(i));
-        this->clusters.push_back(cluster);
+         Cluster cluster(this->mums.at(i));
+         this->clusters.push_back(cluster);
     }
-
+    
     TRegion lRegion;
     TRegion rRegion;
     this->m0 = int(mums.size());
@@ -2091,7 +2140,7 @@ bool Aligner::setInitialClusters(void)
 // {{{ bool Alinger::setInitialClusters( string anchorFileName )
 bool Aligner::setInitialClusters( string anchorFileName )
 {
-
+    
     vector<TMum> mums;
     vector<string> rawmums;
     vector<long> startpos;
@@ -2100,22 +2149,22 @@ bool Aligner::setInitialClusters( string anchorFileName )
     int length;
     char * buffer ;
     int i = 0;
-
+    
     //parse anchorFile
     ifstream is(anchorFileName.c_str());
     is.seekg (0, ios::end);
     length = is.tellg();
     is.seekg (0, ios::beg);
-
+    
     // get length of file:
     // allocate memory:
     buffer = new char [length-2];
-
+    
     is.getline(header,80);
     is.getline(header,80);
     // read data as a block:
     is.read (buffer,length);
-
+    
     string data(buffer);
     int pos = 0;
     int oldpos = 0;
@@ -2129,7 +2178,7 @@ bool Aligner::setInitialClusters( string anchorFileName )
         oldpos = pos+1;
         pos = data.find("\n",pos+1);
         rawmums.push_back(tempmum);
-
+        
     }
 
     for( ssize i = 0; i < rawmums.size(); i++)
@@ -2142,7 +2191,7 @@ bool Aligner::setInitialClusters( string anchorFileName )
         tempmum = rawmums.at(i);
         mpos = tempmum.find("  ",0);
         oldmpos = 0;
-
+        
         while( mpos != int(string::npos) )
         {
             string mstart = tempmum.substr( oldmpos, mpos-oldmpos );
@@ -2154,9 +2203,9 @@ bool Aligner::setInitialClusters( string anchorFileName )
             startpos.push_back( start );
             oldmpos = mpos+1;
             mpos = tempmum.find("  ",mpos+1);
-
+            
         }
-
+        
         mpos = tempmum.find(" ",oldmpos+1);
         string mlength = tempmum.substr( oldmpos, mpos-oldmpos );
         mumlength = atol(mlength.c_str());
@@ -2167,9 +2216,9 @@ bool Aligner::setInitialClusters( string anchorFileName )
         mumlength = 0;
 
     }
-
+    
     is.close();
-
+    
     for(int i =0; i < int(mums.size());i++)
     {
         for ( ssize k = 0; k < this->n; k++)
@@ -2182,12 +2231,12 @@ bool Aligner::setInitialClusters( string anchorFileName )
         Cluster cluster(mums.at(i));
         this->clusters.push_back(cluster);
     }
-
+    
     this->m0 = int(mums.size());
-
+    
     TRegion lRegion;
     TRegion rRegion;
-
+    
     for ( i = 0; i < int(this->clusters.size()); i ++ )
     {
         lRegion = this->determineRegion(this->clusters.at(i), 1 );
@@ -2208,7 +2257,7 @@ bool Aligner::setInitialClusters( string anchorFileName )
             this->r110.push_back(rRegion);
         }
     }
-
+    
     return this->m0;
 }
 
@@ -2223,22 +2272,22 @@ bool Aligner::setUnalignableRegions( void )
     ofstream unalnfile ( unalignfile.c_str());
 
     bool stop = 0;
-
+    
     vector<long> lastpos(this->mumlayout.size(),0);
     while ( !stop )
     {
-
+        
         for ( ssize k = 0; k < this->n; k++)
         {
             long startpos = -1;
             long endpos = -1;
-
-
+            
+            
             for( long m = lastpos.at(k); m < this->mumlayout[k].size(); m++)
             {
                 if ( this->mumlayout[k][m] == 0 )
                 {
-
+                    
                     this->mumlayout[k][m] = 1;
                     if (startpos < 0)
                     {
@@ -2247,7 +2296,7 @@ bool Aligner::setUnalignableRegions( void )
                     }
                     else
                         endpos +=1;
-
+                    
                 }
                 else
                 {
@@ -2261,32 +2310,32 @@ bool Aligner::setUnalignableRegions( void )
                 }
             }
             if (startpos != endpos)
-            {
+            {                
                 unalnfile << ">" << k+1  << ":" << startpos << "-" << endpos << " + " << this->fasta.at(k).substr(0,this->fasta.at(k).size()) << endl;
                 string  s1 =  this->genomes[k].substr(startpos, endpos-startpos);
 
                 long pos = 0;
                 while ( pos+80 < s1.size() )
                 {
-
+                    
                     unalnfile << s1.substr(pos,80) << endl;
                     pos = pos + 80;
                 }
                 if ( pos + 1 < s1.size() )
                     unalnfile << s1.substr(pos,s1.size()) << endl;
                 if (s1.size() == 0)
-                {
-                    unalnfile << "-" << endl;
-                }
+		{
+		  unalnfile << "-" << endl;
+		}
                 unalnfile << "=" << endl;
-
+                
             }
             else if (startpos == -1 && k == this->n-1)
                 stop = 1;
-
+            
         }
     }
-
+    
     unalnfile.close();
     return 0;
 }
@@ -2300,8 +2349,8 @@ bool Aligner::setInterClusterRegions( void )
 {
     vector<Cluster> interclusters;
     sort( this->clusters.begin(), this->clusters.end() );
-
-
+    
+    
     for( vector<Cluster>::iterator ct  = this->clusters.begin(); ct+1 < this->clusters.end(); ct++)
     {
         bool add = true;
@@ -2312,9 +2361,9 @@ bool Aligner::setInterClusterRegions( void )
         int flag = 0;
         for( ssize a = 0; a < this->n; a++)
         {
-
+            
             vector<Cluster>::iterator nt = ct+1;
-
+            
             // if current cluster is not at end, and the start in each sequence is greater than the end of the previous cluster
             if (( nt != this->clusters.end() && nt->start.at(a) - ct->end.at(a) <=0 )&&(1))
             {
@@ -2336,21 +2385,21 @@ bool Aligner::setInterClusterRegions( void )
                 }
                 else
                     continue;
-
+                
             }
             //no mums found, reached end of genome
             if (! flag)
                 end.push_back(stop-1);
-
+            
         }
-
+        
         if ( !add )
             continue;
         TMum bmum(start,length);
         TMum emum(end,length);
         Cluster acluster(bmum,0);
         acluster.addMum(emum);
-
+        
         for( ssize a = 0; a < this->n; a++)
         {
             if ((acluster.end.at(a) - acluster.start.at(a)) < 5)
@@ -2362,7 +2411,7 @@ bool Aligner::setInterClusterRegions( void )
         if (add)
             interclusters.push_back(acluster);
 
-
+        
     }
 
     this->clusters.insert(this->clusters.begin(), interclusters.begin(),interclusters.end());
@@ -2390,13 +2439,13 @@ void Aligner::setFinalClusters(string mumFileName)
 
     // allocate memory:
     buffer = new char [length-2];
-
+    
     is.getline(header,80);
     is.getline(header,80);
-
+    
     // read data as a block:
     is.read (buffer,length);
-
+    
     string data(buffer);
     int pos = 0;
     int oldpos = 0;
@@ -2404,14 +2453,14 @@ void Aligner::setFinalClusters(string mumFileName)
     int oldmpos = 0;
     long start = 0;
     pos = data.find("\n",0);
-
+    
     while( pos != int(string::npos) )
     {
         string tempmum( data.substr(oldpos , pos-oldpos ));
         oldpos = pos+1;
         pos = data.find("\n",pos+1);
         rawmums.push_back(tempmum);
-
+        
     }
 
     for( int i = 0; i < int(rawmums.size()); i++)
@@ -2424,15 +2473,15 @@ void Aligner::setFinalClusters(string mumFileName)
         tempmum = rawmums.at(i);
         mpos = tempmum.find("  ",0);
         oldmpos = 0;
-
+        
         while( mpos != int(string::npos) )
-        {
+        {            
             string mstart = tempmum.substr( oldmpos, mpos-oldmpos );
             start = atol(mstart.c_str());
             startpos.push_back( start );
             oldmpos = mpos+1;
             mpos = tempmum.find("  ",mpos+1);
-
+            
         }
 
         mpos = tempmum.find(" ",oldmpos+1);
@@ -2445,7 +2494,7 @@ void Aligner::setFinalClusters(string mumFileName)
         mumlength = 0;
 
     }
-
+    
     is.close();
     for(int i =0; i < int(mums.size());i++)
     {
@@ -2459,7 +2508,7 @@ void Aligner::setFinalClusters(string mumFileName)
         Cluster cluster(mums.at(i));
         this->clusters.push_back(cluster);
     }
-
+    
     this->m0 = int(mums.size());
     this->setFinalClusters();
 }
@@ -2477,7 +2526,7 @@ void Aligner::setFinalClusters(void)
     vector<TMum>::iterator mt, nt;
     bool addmum  = true;
     long mumcount = 0;
-
+    
     this->clusters.clear();
     // converting old to new clusters
     sort( this->mums.begin(), this->mums.end() );
@@ -2485,7 +2534,7 @@ void Aligner::setFinalClusters(void)
     Cluster cluster(*(mt));
     for ( nt  = this->mums.begin()+1; nt < this->mums.end(); nt++)
     {
-
+        
         if (nt->length < this->random)
         {
             addmum = true;
@@ -2496,7 +2545,7 @@ void Aligner::setFinalClusters(void)
             Cluster newcluster( *(nt-1) );
             cluster = newcluster;
         }
-
+        
         mumcount = 0;
         addmum = true;
         float max_length_region = 0;
@@ -2510,7 +2559,7 @@ void Aligner::setFinalClusters(void)
                     avg_length_region += nt->start.at(k) - cluster.end.at(k);
                 else
                     avg_length_region += nt->start.at(k) - cluster.end.at(k);
-
+                
                 if ( nt->isforward.at(k) && (nt->start.at(k) - cluster.end.at(k)) >  max_length_region)
                 {
                     max_length_region = nt->start.at(k) - cluster.end.at(k);
@@ -2519,7 +2568,7 @@ void Aligner::setFinalClusters(void)
                 {
                     max_length_region = nt->start.at(k) - cluster.end.at(k);
                 }
-
+                
                 if ( nt->isforward.at(k) && (nt->start.at(k) - cluster.end.at(k)) <  min_length_region)
                 {
                     min_length_region = nt->start.at(k) - cluster.end.at(k);
@@ -2532,7 +2581,7 @@ void Aligner::setFinalClusters(void)
                 {
                     //the overlap is with 2 inverted MUMs, JOIN!
                     addmum = false;
-
+                    
                 }
                 else if (1 && (nt->isforward.at(k)) && (nt->start.at(k) - cluster.end.at(k) <0))
                 {
@@ -2574,11 +2623,11 @@ void Aligner::setFinalClusters(void)
                                 addmum = false;
                                 break;
                             }
-
+                            
                         }
                     }
                 }
-
+                
                 if ( ! addmum )
                     break;
             }
@@ -2598,7 +2647,7 @@ void Aligner::setFinalClusters(void)
                     cluster.addMum( *(nt) );
                     mumcount++;
                 }
-
+                
             }
             else if (min_length_region/max_length_region >= 1.0-diag_diff)
             {
@@ -2616,7 +2665,7 @@ void Aligner::setFinalClusters(void)
         {
             this->clusters.push_back(cluster);
         }
-
+        
     }
     if ( ! addmum  )
     {
@@ -2650,7 +2699,7 @@ void Aligner::getSubseq(string seq,int start,int end)
 {
     string bases = "AGCT";
     string ssfile = "./output/subseq.fna";
-
+    
     ofstream sfile ( ssfile.c_str());
     sfile << ">subseq " << start <<":" << end << endl;
     for(int i = start; i < end; i++)
@@ -2679,9 +2728,9 @@ char Aligner::shuffleChar(char b, bool enabled, bool &ft,int i,int diff)
         {
             rvalue = char(bases.at(rand()%3));
         }
-
+        
     }
-
+    
     return rvalue;
 }
 // }}}
@@ -2701,13 +2750,8 @@ char Aligner::shuffleChar(char b, bool enabled, bool &ft,int i,int diff)
 // {{{ int main(int argc, char* argv[])
 int main ( int argc, char* argv[] )
 {
-    /*ofstream myfile;
-    myfile.open ("example.txt");
-    myfile << "Writing this to a file.\n";
-    myfile.close();
-    fprintf(stderr,"I LOVE PARSNP");*/
-
-    string pversion = "v1.0.1";
+    
+    string pversion = "v1.0.1"; 
     // {{{ variables
     //task_scheduler_init init;
     vector<string> genomes,pwgenomes,files,pwfiles,fasta,headers;
@@ -2745,37 +2789,37 @@ int main ( int argc, char* argv[] )
     bool version = false;
     bool help = false;
     for ( int i = 0; i < argc; i++ )
-    {
-        if ( argv[i][0] == '-' )
-        {
-            switch ( argv[i][1] )
-            {
-                case 'h': help = true; break;
-                case 'v': version = true; break;
+      {
+	if ( argv[i][0] == '-' )
+	  {
+	    switch ( argv[i][1] )
+	      {
+	      case 'h': help = true; break;
+	      case 'v': version = true; break;
 
-            }
-        }
-    }
+	      }
+	  }
+      }
 
     if (help )
-    {
-        cout << "parsnp options:" << endl;
-        cout << "   -h <display this message>" << endl;
-        cout << "   -v <display the version>" << endl;
-        cout << "   <parameter file with options>" << endl;
+      {
+	cout << "parsnp options:" << endl;
+	cout << "   -h <display this message>" << endl;
+	cout << "   -v <display the version>" << endl;
+	cout << "   <parameter file with options>" << endl;
         exit(0);
     }
     if (version)
     {
-        cout << "Parsnp " << pversion <<  endl;
-        exit(0);
+      cout << "Parsnp " << pversion <<  endl;
+      exit(0);
     }
     if ( argc < 2)
     {
         cout << "ERROR: No parameter file specified!" << endl;
         exit(1);
     }
-
+    
     time (&tstart);
     CIniFile iniFile( argv[1] );
     iniFile.ReadFile();
@@ -2808,26 +2852,26 @@ int main ( int argc, char* argv[] )
     //factor = 1.5;
     prefix = iniFile.GetValue( "Output","prefix","parsnp");
     outdir = iniFile.GetValue( "Output","outdir","output");
-
+    
     reverseRef = iniFile.GetValueB( "Reference", "reverse");
     reverseQuery = iniFile.GetValueB( "Query","reverse");
-
+    
     qfiles  = iniFile.NumValues("Query")/2;
-
+    
     bool harsh=false;
     vector<string> allfiles;
-
+    
     string mumatom;
-
+    
     string fname;
     int loc,len;
     time (&start);
-
+    
     pos_to_header.resize(qfiles+1);
     while ( i <= qfiles )
     {
         vector< uint > intervals;
-
+        
         contig_intervals.push_back(intervals);
         reverse = false;
         if ( i == 0 )
@@ -2886,7 +2930,7 @@ int main ( int argc, char* argv[] )
         }
         ifstream file( files.at(i).c_str());
         char ch;
-
+        
         file.seekg(0,ios_base::end);
         file.seekg(0, ios_base::beg);
         file.getline( header, 2500 );
@@ -2904,18 +2948,18 @@ int main ( int argc, char* argv[] )
         tloc   = 0;
         ncount = 0;
         nloc = 0;
-
-
+        
+        
         long long counter = 0;
         bool stopimport = false;
         std::stringstream sstm2;
         while ( file.get(ch) and !stopimport)
         {
             counter +=1;
-
+            
             switch(toupper(ch))
             {
-
+                    
                 case 'A':
                     acount +=1;
                     aloc   += counter;
@@ -2923,9 +2967,9 @@ int main ( int argc, char* argv[] )
                         genome.append("T");//84
                     else
                         genome.append("A");
-
+                    
                     break;
-
+                    
                 case 'G':
                     gcount +=1;
                     gloc   += counter;
@@ -2934,7 +2978,7 @@ int main ( int argc, char* argv[] )
                     else
                         genome.append("G");
                     break;
-
+                    
                 case 'C':
                     ccount +=1;
                     cloc   += counter;
@@ -2943,7 +2987,7 @@ int main ( int argc, char* argv[] )
                     else
                         genome.append("C");//67
                     break;
-
+                    
                 case 'T':
                     tcount+=1;
                     tloc   += counter;
@@ -3014,13 +3058,13 @@ int main ( int argc, char* argv[] )
                     sstm2 << "s" << seqcount;
                     pos_to_header.at(i)[ncount+ccount+tcount+acount+gcount] = sstm2.str();//header;
                     contig_intervals[i].push_back(ncount+ccount+tcount+acount+gcount);
-
+                    
                     if (i > 0)
                     {
                         genome.append(d+10,'N');
                         ncount += d+10;
                     }
-
+                    
                     break;
                 case '\t':
                 case ' ':
@@ -3028,16 +3072,16 @@ int main ( int argc, char* argv[] )
                 default:
                     continue;
             }
-
+            
         }
         // }}}
-
+        
         if(reverse)
             std::reverse(genome.begin(),genome.end());
 
         contig_intervals[i].push_back(ncount+ccount+tcount+acount+gcount);
         genomes.push_back(genome);
-
+        
         if(1)
         {
             float percent = 0.0;
@@ -3045,7 +3089,7 @@ int main ( int argc, char* argv[] )
             percent = float(ccount)/float(genome.size())*100;
             percent = float(tcount)/float(genome.size())*100;
             percent = float(acount)/float(genome.size())*100;
-
+  
             gcCount.push_back(float(gcount)+float(ccount));
             atCount.push_back(float(acount)+float(tcount));
             cout << fname << ",Len:" << genome.size() << ",GC:" << ((float(gcount)+float(ccount))/float(genome.size()-ncount))*100 << endl;
@@ -3055,16 +3099,16 @@ int main ( int argc, char* argv[] )
         file.close();
         i++;
     }
-
+    
     // }}}
-
-
-
+    
+    
+    
     string mfiled =outdir;
     mfiled+="/parsnpAligner.log";
     ofstream mfile ( mfiled.c_str());
-
-
+    
+    
     cerr << "\n*****************************************************" << endl;
     cerr << "\nparsnpAligner:: rapid whole genome SNP typing" << endl;
     cerr << "\n*****************************************************\n" << endl;
@@ -3073,7 +3117,7 @@ int main ( int argc, char* argv[] )
     cerr << "\nPreparing to verify and process input sequences..." << endl;
     dif = difftime (end,start);
     printf("        Finished processing input sequences, elapsed time: %.0lf seconds\n\n", dif );
-
+    
     Aligner align( genomes, files, c, d, q, p, anchors, mums, random, clustalparams, fasta,factor,harsh,gcCount,atCount,shustring,doAlign,gridRun,cores,extendmums, header_to_index,pos_to_header,headers,calc_mumi,diag_diff,prefix,outdir,recomb_filter,doUnalign);
     for ( ssize i = 0; i < align.n; i ++ )
     {
@@ -3086,9 +3130,9 @@ int main ( int argc, char* argv[] )
         cerr << "Searching for initial MUM anchors..." << endl;
     else
         cerr << "Calculating mumi distances.." << endl;
-
+    
     bool mumsfound = 0;
-
+    
     if( anchorfile.size() )
     {
         cerr << "*Status: MUM anchor file found " << anchorfile << endl;
@@ -3101,14 +3145,14 @@ int main ( int argc, char* argv[] )
     }
     else if ( ! mumfile.size() )
         mumsfound = align.setInitialClusters();
-
+    
     if (calc_mumi)
         exit(0);
-
+    
     time ( &end );
-
+    
     dif = difftime (end,start);
-    align.anchorTime = dif;
+    align.anchorTime = dif;    
     time ( &start);
     if ( ! anchorsOnly && ! mumfile.size() && ! shustring)
     {
@@ -3116,10 +3160,10 @@ int main ( int argc, char* argv[] )
         mumsfound = align.doWork();
     }
     time ( &end);
-
+    
     if ( !mumsfound && !mumfile.size())
     {
-
+        
         mfile << "NO MUMS FOUND" << endl;
         mfile.close();
         return 0;
@@ -3129,36 +3173,36 @@ int main ( int argc, char* argv[] )
         mfile << "MUMS FOUND" << endl;
         mfile.close();
     }
-
+    
     dif = difftime (end,start);
     printf("        Finished recursive MUM search, elapsed time: %.0lf seconds\n\n", dif );
     align.coarsenTime = dif;
-
+    
     if ( random && ! mumfile.size() )
     {
         cerr << "Filtering spurious matches..." << endl;
         time ( &start);
         align.random = random;
         align.filterRandom1(random);
-
+        
         //align.filterRandom();
         time ( &end);
         dif = difftime(end,start);
         printf("        Finished filtering spurious matches, elapsed time: %.0lf seconds\n\n",dif);
         align.randomTime = dif;
     }
-
-
+    
+    
     time ( &start);
-
+    
     cerr << "Creating and verifying final LCBs..." << endl;
     if( mumfile.size())
         align.setFinalClusters(mumfile);
     else
         align.setFinalClusters();
-
+    
     align.filterRandomClustersSimple1();
-
+    
     if( mumfile.size())
         align.setFinalClusters(mumfile);
     else
@@ -3185,11 +3229,11 @@ int main ( int argc, char* argv[] )
 
     dif = difftime (end,start);
     printf("        Output files updated, elapsed time: %.0lf seconds\n\n", dif );
-
-
+    
+    
     time ( &tend);
     dif = difftime (tend,tstart);
-
+    
     cerr << "Parsnp: Finished core genome alignment" << endl;
     printf("        See log file for futher details. Total processing time: %.0lf seconds \n\n", dif );
     exit(0);

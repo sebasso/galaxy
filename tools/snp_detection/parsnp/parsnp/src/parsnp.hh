@@ -1,3 +1,11 @@
+/////////////////////////////////////////
+// parsnp.hh
+// main module for parsnp Aligner
+// takes a single configuration file as input, output is XMFA
+/////////////////////////////////////////
+
+// See the LICENSE file included with this software for license information.
+
 #ifndef ALIGNER_H
 #define ALIGNER_H
 #define _CRT_SECURE_NO_DEPRECATE 1
@@ -47,7 +55,7 @@ class Aligner
     vector<TRegion> regions;
     vector<TRegion> r110;
     // }}}
-
+    
     // {{{ public
 public:
     int c, d, q, p, doAlign,cores;
@@ -70,17 +78,17 @@ public:
     Aligner();
     ~Aligner();
 
-    /**
-    * parsnp Aligner class constructor.
-    * @see testMe()
-    * @param genomes string vector containing seq data.
-    * @param files genome file paths.
-    * @param c min cluster length.
-    * @param c min cluster length.
-    * @return The test results
-    */
+     /**
+     * parsnp Aligner class constructor.
+     * @see testMe()
+     * @param genomes string vector containing seq data.
+     * @param files genome file paths.
+     * @param c min cluster length.
+     * @param c min cluster length.
+     * @return The test results
+     */
     Aligner( vector<string>& ,vector<string>&, int, int , int, int, string, string, bool,  vector<char *>&, vector<string>&
-            , float, bool , vector<float>&, vector<float>& ,bool,int,bool,int,bool,map<string, int>&, vector< map <int,string> > &, vector<string>&, bool calc_mumi, float diag_diff, string prefix, string outdir, bool recomb_filter, bool doUnalign);
+	     , float, bool , vector<float>&, vector<float>& ,bool,int,bool,int,bool,map<string, int>&, vector< map <int,string> > &, vector<string>&, bool calc_mumi, float diag_diff, string prefix, string outdir, bool recomb_filter, bool doUnalign);
     /**
      * parsnp Aligner class destructor
      */
@@ -117,8 +125,8 @@ public:
     static char shuffleChar(char b,bool enabled,bool &ft, int i,int diff);
     void formatPpmumInput( vector<long>, vector<long>,  char [] );
     void writeOutput(string psnp, vector<float>& coveragerow);
-
-
+    
+    
     // }}}
 };
 // }}}
