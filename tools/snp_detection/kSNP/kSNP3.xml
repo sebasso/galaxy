@@ -3,7 +3,7 @@
 
     <command>
     mkdir -p TestRun1;
-    $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -core -path $__tool_directory__/kSNP3.021_Source >> $stdout 2>> $stderr
+    $__tool_directory__/kSNP3.021_Source/kSNP3 -in $input_files -outdir TestRun1 -k 13 -CPU $CPUS -kchooser $kchoose -ML -path $__tool_directory__/kSNP3.021_Source >> $stdout 2>> $stderr
     </command>
 <!--
 	command tag needs at least to pipe stderr because kSNP defaults write there like: 2>> someoutput_file. Use $ infront of filename to have it the <outputs> tag for galaxy to monitor the job live in the browser.
@@ -24,8 +24,8 @@ core snps not useful for now, gives nearly no SNPs:
   </inputs>
 
    <outputs>
-     <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
-     <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
+     <data name="stderr" format="txt" label="${tool.name} stderr"/>
+     <data name="stdout" format="txt" label="${tool.name} stdout"/>
     <data name="ML_tree" format="nhx" from_work_dir="TestRun1/tree.ML.tre" label="${tool.name} ML tree"/>
     <data name="All Snps" format="txt" from_work_dir="TestRun1/SNPs_all_matrix.fasta" label="${tool.name} SNP list"/>
     <data name="SNPs with position" format="txt" from_work_dir="TestRun1/SNPs_all" label="${tool.name} SNP list with SNP position"/>

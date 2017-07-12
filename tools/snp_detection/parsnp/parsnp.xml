@@ -6,6 +6,7 @@
 
     <command>
       mkdir Res-campy;
+
       python $__tool_directory__/parsnp/Parsnp.py $__tool_directory__ -r $reference_genome -d $genome_list -p $CPUS -o Res-campy/ >> $stdout 2>> $stderr
 
     </command>
@@ -21,8 +22,8 @@
   </inputs>
 
    <outputs>
-     <data name="stderr" auto_format="true" label="${tool.name} stderr"/>
-     <data name="stdout" auto_format="true" label="${tool.name} stdout"/>
+     <data name="stderr" format="txt" label="${tool.name} stderr"/>
+     <data name="stdout" format="txt" label="${tool.name} stdout"/>
      <data name="ML_tree" format="nhx" from_work_dir="Res-campy/parsnp.tree" label="${tool.name}  ML tree"/>
      <data name="All Snps" format="txt" from_work_dir="Res-campy/parsnp.snps.mblocks" label="${tool.name} SNP list"/>
      <data name="XMFA file" format="txt" from_work_dir="Res-campy/parsnp.xmfa" label="${tool.name} XMFA"/>
