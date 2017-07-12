@@ -156,14 +156,16 @@ if ($OS == 'Darwin') then
 else
   set os_path="linux_specific"
 endif
-printf "\n os_path:\n $os_path"
+printf "\n os_path:\n $os_path \n"
 
+printf "\n python version\n"
+python -V
 
 if ($?kchooser) then
   if ($kchooser == "1") then
     printf "k before kchooser: $k\n"
     set k=`python $kSNP/Kchooser-allFiles.py in_list $kSNP $os_path`
-    printf "sat k with kchooser k:$k\n"
+    printf "\nsat k with kchooser k:$k\n"
   endif
 else
   printf "Kchooser variable is undefined\n"
@@ -430,7 +432,10 @@ $kSNP/number_SNPs_all3 all_SNPs_sorted
 $kSNP/rename_from_table3 all_SNPs_sorted_labelLoci fileName2genomeName SNPs_all
 
 #creates sorted formatted SNP position list for analysis
+file kSNP_SNPs_POS_formatted.tsv
 python $kSNP/kSNP_SNP_POS_extracter.py SNPs_all
+file kSNP_SNPs_POS_formatted.tsv
+
 
 
 # Set reference genome for vcf file to the be first finished genome, if this is empty, then set it to be the first genome in the input fasta file.
