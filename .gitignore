@@ -154,16 +154,23 @@ tools/snp_detection/parsnp/parsnp/muscle/config/missing
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE-3.7.pc
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/Makefile
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/Makefile.in
+
+tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/*.o
+tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/*.lo
+tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/.libs/
+tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/.deps/
+
+tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/libMUSCLE-3.7.la
+tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/muscle
+tools/snp_detection/parsnp/parsnp/muscle/configure
+
+
 tools/snp_detection/parsnp/parsnp/muscle/libtool
 tools/snp_detection/parsnp/parsnp/muscle/m4/libtool.m4
 tools/snp_detection/parsnp/parsnp/muscle/m4/ltoptions.m4
 tools/snp_detection/parsnp/parsnp/muscle/m4/ltsugar.m4
 tools/snp_detection/parsnp/parsnp/muscle/m4/ltversion.m4
 tools/snp_detection/parsnp/parsnp/muscle/m4/lt~obsolete.m4
-
-
-tools/snp_detection/parsnp/parsnp/
-
 
 tools/snp_detection/parsnp/parsnp/Makefile
 tools/snp_detection/parsnp/parsnp/Makefile.in
