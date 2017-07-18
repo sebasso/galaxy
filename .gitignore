@@ -141,8 +141,6 @@ tools/snp_detection/parsnp/parsnp/muscle/config.log
 tools/snp_detection/parsnp/parsnp/muscle/autom4te.cache
 tools/snp_detection/parsnp/parsnp/muscle/config/compile
 tools/snp_detection/parsnp/parsnp/muscle/INSTALL
-tools/snp_detection/parsnp/parsnp/muscle/Makefile
-tools/snp_detection/parsnp/parsnp/muscle/Makefile.in
 tools/snp_detection/parsnp/parsnp/muscle/aclocal.m4
 tools/snp_detection/parsnp/parsnp/muscle/config.status
 tools/snp_detection/parsnp/parsnp/muscle/config/config.guess
@@ -152,18 +150,14 @@ tools/snp_detection/parsnp/parsnp/muscle/config/install-sh
 tools/snp_detection/parsnp/parsnp/muscle/config/ltmain.sh
 tools/snp_detection/parsnp/parsnp/muscle/config/missing
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE-3.7.pc
-tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/Makefile
-tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/Makefile.in
 
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/*.o
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/*.lo
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/.libs/
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/.deps/
-
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/libMUSCLE-3.7.la
 tools/snp_detection/parsnp/parsnp/muscle/libMUSCLE/muscle
 tools/snp_detection/parsnp/parsnp/muscle/configure
-
 
 tools/snp_detection/parsnp/parsnp/muscle/libtool
 tools/snp_detection/parsnp/parsnp/muscle/m4/libtool.m4
@@ -171,9 +165,6 @@ tools/snp_detection/parsnp/parsnp/muscle/m4/ltoptions.m4
 tools/snp_detection/parsnp/parsnp/muscle/m4/ltsugar.m4
 tools/snp_detection/parsnp/parsnp/muscle/m4/ltversion.m4
 tools/snp_detection/parsnp/parsnp/muscle/m4/lt~obsolete.m4
-
-tools/snp_detection/parsnp/parsnp/Makefile
-tools/snp_detection/parsnp/parsnp/Makefile.in
 tools/snp_detection/parsnp/parsnp/aclocal.m4
 tools/snp_detection/parsnp/parsnp/autom4te.cache/
 tools/snp_detection/parsnp/parsnp/bin/parsnp
@@ -184,9 +175,6 @@ tools/snp_detection/parsnp/parsnp/depcomp
 tools/snp_detection/parsnp/parsnp/install-sh
 tools/snp_detection/parsnp/parsnp/missing
 tools/snp_detection/parsnp/parsnp/src/.deps/
-tools/snp_detection/parsnp/parsnp/src
-tools/snp_detection/parsnp/parsnp/src/Makefile
-tools/snp_detection/parsnp/parsnp/src/Makefile.in
 tools/snp_detection/parsnp/parsnp/src/parsnp
 tools/snp_detection/parsnp/parsnp/src/parsnp-Converter.o
 tools/snp_detection/parsnp/parsnp/src/parsnp-LCB.o

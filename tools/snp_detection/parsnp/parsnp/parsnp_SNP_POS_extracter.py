@@ -87,5 +87,5 @@ def parsesnps():
 
 if __name__ == '__main__':
 	print sys.argv
-	#usage: sys.argv[1] = SNPs_all file from kSNP output
+	#usage: sys.argv[1] = SNPs_all file from output
 	parsesnps()
