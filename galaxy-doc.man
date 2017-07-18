@@ -1,0 +1,91 @@
+
+
+Installing new python version:
+new python version >= 2.7.1
+brew install python if possible...
+must have numpy > 
+AttributeError: 'module' object has no attribute 'percentile'
+assert numpy
+
+must have local python
+mkdir py;
+wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz;
+tar -xvf Python-2.7.13.tgz;
+cd Python-2.7.13/;
+./configure --prefix=$HOME/py;
+make;
+make install;
+cd ..;
+cd py/bin;
+PATH=`pwd`:$PATH;
+python -V;
+echo $PATH
+echo $PATH >> ~/.bashrc
+
+then fetch local packages-> first download pip from pypi then use
+pip install toolname
+for rest of dependencies
+
+
+external database:
+psql+mysql
+where workflows are stored in galaxy
+or download and put saved workflow to gitrepo
+
+in order to build parsnp on first run -> put a check somewhere for parsnp executable
+in parsnp/bin eg file parsnp/bin
+shuld check if tools are built in sh run.sh
+OR
+	in build script
+
+
+
+#postgresql://username:password@localhost/mydatabase
+
+postgresql://sebastiansoberg:galaxy@localhost/galaxy
+
+mysql://galaxy:galaxy@localhost/galaxy
+
+POSGRESQL SETUP:
+brew uninstall postgresql
+brew install postgresql
+add pg_ctl bin to path
+pg_ctl -D /usr/local/var/postgresql@9.5 start
+
+createdb `whoami`
+psql
+\q
+
+psql postgres -c 'CREATE EXTENSION "adminpack";'
+\password "hostname"
+
+createdb "galaxy"
+
+\conninfo #finds connection information
+
+
+
+
+MYSQL SETUP:
+brew install mysql
+mysql.server start || brew services start mysql
+#mysql -u username -p $-p prompts password
+mysql -u root -p
+#CREATE USER 'username'@'hostaddress' IDENTIFIED BY 'userpassword';
+CREATE USER 'galaxy'@'localhost' IDENTIFIED BY 'galaxy';
+CREATE DATABASE galaxy CHARACTER SET utf8; #must be utf8 for galaxy compliance
+#GRANT ALL PRIVILEGES ON dbname.* TO 'username'@'host' identified by 'rootpw'; #host=ip can be found with status or select user();
+GRANT ALL PRIVILEGES ON galaxy.* TO 'galaxy'@'localhost' identified by 'galaxy';
+
+SELECT User, Host FROM mysql.user; -shows users on server instance
+show databases; -lists databases
+select user(); -shows user info
+status; -shows all imysql info for the logged in user
+change galaxy.ini
+
+###mysql docs:
+https://www.rosehosting.com/blog/mysql-show-users/
+https://stackoverflow.com/questions/5016505/mysql-grant-all-privileges-on-database/15707789#15707789
+https://stackoverflow.com/questions/3613704/mysql-show-current-connection-info
+https://dev.mysql.com/doc/refman/5.7/en/adding-users.html
+
