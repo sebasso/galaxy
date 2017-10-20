@@ -1,0 +1,203 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "Snp-comparator-workflow", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "content_id": null, 
+            "errors": null, 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Input dataset", 
+            "outputs": [], 
+            "position": {
+                "left": 192.5, 
+                "top": 401
+            }, 
+            "tool_id": null, 
+            "tool_state": "{}", 
+            "tool_version": null, 
+            "type": "data_input", 
+            "uuid": "41c9c5b1-2e8c-40ce-aaac-ea575a22d135", 
+            "workflow_outputs": []
+        }, 
+        "1": {
+            "annotation": "", 
+            "content_id": null, 
+            "errors": null, 
+            "id": 1, 
+            "input_connections": {}, 
+            "inputs": [], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 172, 
+                "top": 515
+            }, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "uuid": "ea1f1052-23ac-4395-b425-475c619cd474", 
+            "workflow_outputs": []
+        }, 
+        "2": {
+            "annotation": "", 
+            "content_id": "parsnp", 
+            "errors": null, 
+            "id": 2, 
+            "input_connections": {
+                "genome_list": {
+                    "id": 1, 
+                    "output_name": "output"
+                }, 
+                "reference_genome": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "parsnp ", 
+            "outputs": [
+                {
+                    "name": "stderr", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "stdout", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "ML_tree", 
+                    "type": "nhx"
+                }, 
+                {
+                    "name": "All Snps", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "XMFA file", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "SNP list formatted", 
+                    "type": "tsv"
+                }
+            ], 
+            "position": {
+                "left": 426.5, 
+                "top": 236
+            }, 
+            "post_job_actions": {}, 
+            "tool_id": "parsnp", 
+            "tool_state": "{\"__page__\": null, \"reference_genome\": \"{\\\"values\\\": [{\\\"src\\\": \\\"hda\\\", \\\"id\\\": 6}]}\", \"__rerun_remap_job_id__\": null, \"CPUS\": \"\\\"4\\\"\", \"genome_list\": \"{\\\"values\\\": [{\\\"src\\\": \\\"hda\\\", \\\"id\\\": 6}]}\"}", 
+            "tool_version": "3.0.0", 
+            "type": "tool", 
+            "uuid": "12fc367c-b9d2-4eff-9e1d-33bb30eb1e46", 
+            "workflow_outputs": []
+        }, 
+        "3": {
+            "annotation": "", 
+            "content_id": "kSNP3", 
+            "errors": null, 
+            "id": 3, 
+            "input_connections": {
+                "input_files": {
+                    "id": 1, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "kSNP3 ", 
+            "outputs": [
+                {
+                    "name": "stderr", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "stdout", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "ML_tree", 
+                    "type": "nhx"
+                }, 
+                {
+                    "name": "All Snps", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "SNPs with position", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "SNP list formatted", 
+                    "type": "tsv"
+                }
+            ], 
+            "position": {
+                "left": 432.5, 
+                "top": 543
+            }, 
+            "post_job_actions": {}, 
+            "tool_id": "kSNP3", 
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"kchoose\": \"\\\"1\\\"\", \"CPUS\": \"\\\"4\\\"\", \"input_files\": \"{\\\"values\\\": [{\\\"src\\\": \\\"hda\\\", \\\"id\\\": 6}]}\"}", 
+            "tool_version": "3.0.0", 
+            "type": "tool", 
+            "uuid": "a30d902e-daf0-41fc-ad59-fda091f2a54e", 
+            "workflow_outputs": []
+        }, 
+        "4": {
+            "annotation": "", 
+            "content_id": "snp_comparator", 
+            "errors": null, 
+            "id": 4, 
+            "input_connections": {
+                "tool_snps_one": {
+                    "id": 2, 
+                    "output_name": "SNP list formatted"
+                }, 
+                "tool_snps_two": {
+                    "id": 3, 
+                    "output_name": "SNP list formatted"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "SNP comparator ", 
+            "outputs": [
+                {
+                    "name": "stderr", 
+                    "type": "_sniff_"
+                }, 
+                {
+                    "name": "stdout", 
+                    "type": "_sniff_"
+                }, 
+                {
+                    "name": "Accumulated SNPs statistics", 
+                    "type": "json"
+                }
+            ], 
+            "position": {
+                "left": 762, 
+                "top": 389
+            }, 
+            "post_job_actions": {}, 
+            "tool_id": "snp_comparator", 
+            "tool_state": "{\"__page__\": null, \"__rerun_remap_job_id__\": null, \"tool_snps_one\": \"null\", \"tool_snps_two\": \"null\"}", 
+            "tool_version": "3.0.0", 
+            "type": "tool", 
+            "uuid": "dba32a54-c515-4257-90bf-8a8f4a066af2", 
+            "workflow_outputs": []
+        }
+    }, 
+    "uuid": "ddf54b7f-052e-4366-a294-bb0f6d06fb30"
+}
